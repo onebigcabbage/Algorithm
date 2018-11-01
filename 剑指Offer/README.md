@@ -1,7 +1,7 @@
 # [剑指Offer解题思路](#二进制中1的个数)
 
 - [二进制中1的个数](#二进制中1的个数) 
-- [数值的整数次方](数值的整数次方) 
+- [数值的整数次方](#数值的整数次方) 
 
 
 
@@ -83,7 +83,7 @@ public int NumberOf(int n) {
 
 
 
-------
+![fengexian](/home/cai/Pictures/fengexian.jpg)
 
 
 
@@ -91,7 +91,49 @@ public int NumberOf(int n) {
 
 ### 题目描述
 
+给定一个 *double* 类型的浮点数 *base* 和 *int* 类型的整数 *exponent* 。求 *base* 的 *exponent* 次方。
+
 ### 解题思路
 
+ 1. 首先考虑 *base* 和 *exponent* 的取值范围，如下图所示：
+
+    ![exp](/home/cai/Documents/Github/exp.png)
+
+ 2. 时间复杂度 *O(n)* ：使用 *base* 相乘 *exponent* 次求整数次方。
+
+ 3. 时间复杂度 *O(logn)* ：快速幂求解。
+
+    　假如求解 $x^{n}$ ，将指数 *n* 变换成二进制。例如 $n=10$ ，则 $x^{n} = x^{2^{1} + 2^{3}}$ 。由于是二进制的计算，可以使用移位。
+
 ### 代码
+
+```java
+public class Solution {
+    public double Power(double base, int exponent) {
+        int index = 0;
+        double res = 1;
+        if(exponent > 0){
+            index = exponent;
+        }else if(exponent < 0){
+            if(base == 0){
+                return -1;
+            }
+            index = -exponent;
+        }else{
+            if(base == 0){
+                return 0;
+            }
+            return 1;
+        }
+        while(index != 0){
+            if((index & 1) == 1){
+                res *= base;
+            }
+            base *= base;
+            index = index >> 1;
+        }
+        return exponent>0?res:(1/res);
+    }
+}
+```
 
