@@ -1,7 +1,10 @@
-# [剑指Offer解题思路](#二进制中1的个数)
+# 剑指Offer解题思路
+
+
 
 - [二进制中1的个数](#二进制中1的个数) 
 - [数值的整数次方](#数值的整数次方) 
+- [调整数组顺序使奇数位于偶数前面](#调整数组顺序使奇数位于偶数前面 ) 
 
 
 
@@ -83,7 +86,7 @@ public int NumberOf(int n) {
 
 
 
-![fengexian](/home/cai/Pictures/fengexian.jpg)
+![fengexian](./pics/fengexian.jpg)
 
 
 
@@ -97,13 +100,13 @@ public int NumberOf(int n) {
 
  1. 首先考虑 *base* 和 *exponent* 的取值范围，如下图所示：
 
-    ![exp](./exp.png)
+    ![exp](./pics/exp.png)
 
  2. 时间复杂度 *O(n)* ：使用 *base* 相乘 *exponent* 次求整数次方。
 
  3. 时间复杂度 *O(logn)* ：快速幂求解。
 
-    　假如求解 $$x^{n}$$ ，将指数 *n* 变换成二进制。例如 $n=10$ ，则 $x^{n} = x^{2^{1} + 2^{3}}$ 。由于是二进制的计算，可以使用移位。
+     假如求解 $ x^{n} $ ，将指数 *n* 变换成二进制。例如 $ n=11 $ ，$11 = 2³×1 + 2²×0 + 2¹×1 + 2º×1$ ，则 $x^{n} = x^{2^{1} + 2^{3}}$ 。由于是二进制的计算，可以使用移位。
 
 ### 代码
 
@@ -136,4 +139,58 @@ public class Solution {
     }
 }
 ```
+
+
+
+![fengexian](./pics/fengexian.jpg)
+
+
+
+## 调整数组顺序使奇数位于偶数前面 
+
+### 题目描述
+
+​	输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+
+### 解题思路
+
+　利用插入排序的思想。
+
+1. 找到第一个偶数的位置 *p* ，从下一个位置 *p+1* 开始遍历数组。例如 [1, 2, 3, 4, 5, 6, 7]，*p = 1* ，从下标 *2* 遍历数组。
+2. 找到第一个奇数，位置为 *j*，从 *p* 到 *j-1* 的元素依次后移一位，空出位置 *p* 放找到的那个奇数。
+
+### 代码
+
+```java
+public void reOrderArray(int [] array) {
+
+    if(array == null || array.length == 0)   return;
+
+    int p = 0;
+    for(int i=0; i<array.length; i++){
+        if(array[i]%2 == 0){
+            p = i;
+            break;
+        }
+    }
+
+    if(p == array.length)   return;
+
+    for(int i=p+1; i<array.length; i++){
+        if(array[i] % 2 == 1){
+            int j = i;
+            int temp = array[j];
+            while(j > p){
+                array[j] = array[j-1];
+                j--;
+            }
+            array[p] = temp;
+            p++;
+        }
+        
+    }
+}
+```
+
+
 
