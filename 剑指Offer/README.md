@@ -5,6 +5,7 @@
 - [二进制中1的个数](#二进制中1的个数) 
 - [数值的整数次方](#数值的整数次方) 
 - [调整数组顺序使奇数位于偶数前面](#调整数组顺序使奇数位于偶数前面 ) 
+- [包含min函数的栈](#包含min函数的栈) 
 
 
 
@@ -150,7 +151,7 @@ public class Solution {
 
 ### 题目描述
 
-输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
+　输入一个整数数组，实现一个函数来调整该数组中数字的顺序，使得所有的奇数位于数组的前半部分，所有的偶数位于数组的后半部分，并保证奇数和奇数，偶数和偶数之间的相对位置不变。
 
 ### 解题思路
 
@@ -211,5 +212,66 @@ public void reOrderArray(int [] array) {
             }
         }
     }
+```
+
+
+
+![fengexian](./pics/fengexian.jpg)
+
+
+
+## 包含min函数的栈
+
+### 题目描述
+
+　定义栈的数据结构，请在该类型中实现一个能够得到栈中所含最小元素的min函数（时间复杂度应为O（1））。
+
+### 解题思路
+
+ 1. 定义一个辅助栈，用来存储当前栈中最小的数。
+
+ 2. 将数据压入栈中时，比较当前数据和辅助栈栈顶元素大小。
+
+ 3. 若栈顶元素大，则把当前数据压入辅助栈中；反之，再次压入栈顶元素。
+
+ 4. 例如入栈元素为：7 4 5 9 2 3 1 4
+
+    辅助栈中元素为：7 4 4 4 2 2 1 1
+
+### 代码
+
+```java
+import java.util.Stack;
+public class Solution {
+    Stack<Integer> stack1 = new Stack<Integer>();
+    Stack<Integer> stack2 = new Stack<Integer>();
+    
+    public void push(int node) {
+        stack1.push(node);
+        if(stack2.empty()){
+            stack2.push(node);
+        }else{
+            int temp = stack2.peek();
+            if(node<=temp){
+                 stack2.push(node);   
+            }else{
+                stack2.push(temp);
+            }
+        }
+    }
+    
+    public void pop() {
+        stack1.pop();
+        stack2.pop();
+    }
+    
+    public int top() {
+        return stack1.peek();
+    }
+    
+    public int min() {
+        return stack2.peek();
+    }
+}
 ```
 
