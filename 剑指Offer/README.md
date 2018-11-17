@@ -6,6 +6,7 @@
 - [数值的整数次方](#数值的整数次方) 
 - [调整数组顺序使奇数位于偶数前面](#调整数组顺序使奇数位于偶数前面 ) 
 - [包含min函数的栈](#包含min函数的栈) 
+- [栈的压入、弹出序列](#栈的压入、弹出序列) 
 
 
 
@@ -87,7 +88,7 @@ public int NumberOf(int n) {
 
 
 
-![fengexian](./pics/fengexian.jpg)
+------
 
 
 
@@ -143,7 +144,7 @@ public class Solution {
 
 
 
-![fengexian](./pics/fengexian.jpg)
+------
 
 
 
@@ -216,7 +217,7 @@ public void reOrderArray(int [] array) {
 
 
 
-![fengexian](./pics/fengexian.jpg)
+------
 
 
 
@@ -274,4 +275,51 @@ public class Solution {
     }
 }
 ```
+
+
+
+------
+
+
+
+## 栈的压入、弹出序列
+
+### 题目描述
+
+　输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否可能为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如序列1,2,3,4,5是某栈的压入顺序，序列4,5,3,2,1是该压栈序列对应的一个弹出序列，但4,3,5,1,2就不可能是该压栈序列的弹出序列。（注意：这两个序列的长度是相等的）。
+
+### 解题思路
+
+ 　1. 借助一个辅助栈，将第一个序列的元素挨个压入栈中。
+ 　2. 压入栈中的同时和第二个序列进行比较，若相同则弹出，反之继续压入。
+ 　3. 当与第二个序列比较完毕后，若栈空则第二个序列是第一个序列的弹出顺序，反之不是。
+
+### 代码
+
+```java
+import java.util.ArrayList;
+import java.util.Stack;
+
+public class Solution {
+    public boolean IsPopOrder(int [] pushA,int [] popA) {
+        if(pushA.length==0 || popA.length==0)    return false;
+        Stack<Integer> stack = new Stack<Integer>();
+        int index = 0;
+        for(int i=0; i<pushA.length; i++){
+            stack.push(pushA[i]);
+            while(!stack.empty() && stack.peek()==popA[index]){
+                stack.pop();
+                index++;
+            }
+        }
+        return stack.empty();
+    }
+}
+```
+
+
+
+------
+
+
 
