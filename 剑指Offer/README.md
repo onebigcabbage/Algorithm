@@ -344,7 +344,7 @@ public class Solution{
         ArrayList<String> list = new ArrayList<String>();
         if(str!=null && str.length()>0){
             strPermutation(str.toCharArray(), 0, list);
-            // Collections.sort(list);
+            Collections.sort(list);
         }
         return list;
     }
