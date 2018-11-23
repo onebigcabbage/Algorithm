@@ -1,4 +1,4 @@
-# 剑指Offer解题思路
+# <center>剑指Offer解题思路</center>
 
 
 
@@ -7,6 +7,7 @@
 - [调整数组顺序使奇数位于偶数前面](#调整数组顺序使奇数位于偶数前面 ) 
 - [包含min函数的栈](#包含min函数的栈) 
 - [栈的压入、弹出序列](#栈的压入、弹出序列) 
+- [字符串的排序](#字符串的排序) 
 
 
 
@@ -108,7 +109,7 @@ public int NumberOf(int n) {
 
  3. 时间复杂度 *O(logn)* ：快速幂求解。
 
-     假如求解 $ x^{n} $ ，将指数 *n* 变换成二进制。例如 $ n=11 $ ，$11 = 2³×1 + 2²×0 + 2¹×1 + 2º×1$ ，则 $x^{n} = x^{2^{1} + 2^{3}}$ 。由于是二进制的计算，可以使用移位。
+     假如求解 $ x^{n} $ ，将指数 *n* 变换成二进制。例如 \[x_{2}\] $ n=11 $ ，$11 = 2³×1 + 2²×0 + 2¹×1 + 2º×1$ ，则 $x^{n} = x^{2^{1} + 2^{3}}$ 。由于是二进制的计算，可以使用移位。
 
 ### 代码
 
@@ -322,4 +323,50 @@ public class Solution {
 ------
 
 
+
+## 字符串的排序
+
+### 题目描述
+
+ 　输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则打印出由字符a,b,c所能排列出来的所有字符串 *abc,acb,bac,bca,cab* 和 *cba* 。
+
+### 解题思路
+
+1. 首先想到的是使用递归的回溯法，依次将每个字符交换到最前面，之后按相同的方式排列剩下的字符。如下图所示：
+
+   ![](./pics/traceback.png)
+
+### 代码
+
+```java
+public class Solution{
+
+    public ArrayList<String> Permutation(String str) {
+        ArrayList<String> list = new ArrayList<String>();
+        if(str!=null && str.length()>0){
+            strPermutation(str.toCharArray(), 0, list);
+            // Collections.sort(list);
+        }
+        return list;
+    }
+    public void strPermutation(char[] ch, int k, ArrayList<String> list){
+        if(k == ch.length-1){
+            if(!list.contains(String.valueOf(ch))){
+                list.add(String.valueOf(ch));
+            }
+        }else{
+            for(int j=k; j<ch.length; j++){
+                swap(ch, k, j);
+                strPermutation(ch, k+1, list);
+                swap(ch, k, j);
+            }
+        }
+    }
+    public void swap(char[] ch, int k, int j){
+        char temp = ch[k];
+        ch[k] = ch[j];
+        ch[j] = temp;
+    }
+}
+```
 

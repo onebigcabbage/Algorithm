@@ -1,0 +1,37 @@
+import java.util.Collections;
+import java.util.ArrayList;
+
+public class Solution{
+
+    public ArrayList<String> Permutation(String str) {
+        ArrayList<String> list = new ArrayList<String>();
+        if(str!=null && str.length()>0){
+            strPermutation(str.toCharArray(), 0, list);
+            Collections.sort(list);
+        }
+        return list;
+    }
+    public void strPermutation(char[] ch, int i, ArrayList<String> list){
+        if(i == ch.length-1){
+            if(!list.contains(String.valueOf(ch))){
+                list.add(String.valueOf(ch));
+            }
+        }else{
+            for(int j=i; j<ch.length; j++){
+                swap(ch, i, j);
+                strPermutation(ch, i+1, list);
+                swap(ch, i, j);
+            }
+        }
+    }
+    public void swap(char[] ch, int i, int j){
+        char temp = ch[i];
+        ch[i] = ch[j];
+        ch[j] = temp;
+    }
+
+    public static void main(String[] args) {
+        Solution p = new Solution();
+        System.out.println(p.Permutation("abc").toString());
+    }
+}
