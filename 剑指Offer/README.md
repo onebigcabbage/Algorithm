@@ -103,7 +103,7 @@ public int NumberOf(int n) {
 
  1. 首先考虑 *base* 和 *exponent* 的取值范围，如下图所示：
 
-    ![exp](./pics/exp.png)
+    ![exp](https://user-images.githubusercontent.com/37443942/48931505-a70ec880-ef31-11e8-9f29-03758013e4d8.png)
 
  2. 时间复杂度 *O(n)* ：使用 *base* 相乘 *exponent* 次求整数次方。
 
@@ -333,7 +333,7 @@ public class Solution {
 
 1. 首先想到的是使用递归的回溯法，依次将每个字符交换到最前面，之后按相同的方式排列剩下的字符。如下图所示：
 
-   ![](./pics/traceback.png)
+   ![](https://user-images.githubusercontent.com/37443942/48931489-89d9fa00-ef31-11e8-9356-81aba5dbca04.png)
 
 ### 代码
 
