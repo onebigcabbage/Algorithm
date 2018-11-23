@@ -25,9 +25,11 @@ public class Solution{
         }
     }
     public void swap(char[] ch, int i, int j){
-        char temp = ch[i];
-        ch[i] = ch[j];
-        ch[j] = temp;
+        if(k!=j){
+            char temp = ch[i];
+            ch[i] = ch[j];
+            ch[j] = temp;
+        }
     }
 
     public static void main(String[] args) {

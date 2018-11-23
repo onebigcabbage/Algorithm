@@ -362,9 +362,11 @@ public class Solution{
         }
     }
     public void swap(char[] ch, int k, int j){
-        char temp = ch[k];
-        ch[k] = ch[j];
-        ch[j] = temp;
+        if(k!=j){
+         	char temp = ch[k];
+        	ch[k] = ch[j];
+        	ch[j] = temp;   
+        }
     }
 }
 ```
