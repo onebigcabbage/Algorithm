@@ -17,6 +17,8 @@
 - [二叉搜索树与双向链表](#二叉搜索树与双向链表) 
 - [字符串的排序](#字符串的排序) 
 - [数组中出现次数超过一半的数字](#数组中出现次数超过一半的数字) 
+- [最小的K个数](#最小的K个数) 
+- [连续子数组的最大和](#连续子数组的最大和) 
 
 
 
@@ -953,7 +955,7 @@ public class Solution{
 
     public ArrayList<String> Permutation(String str) {
         ArrayList<String> list = new ArrayList<String>();
-        if(str!=null && str.length()>0){
+        if(str!=null){
             strPermutation(str.toCharArray(), 0, list);
             Collections.sort(list);
         }
@@ -999,9 +1001,9 @@ public class Solution{
 方法一：
 
 1. 若数组中有出现次数超过一半的数字，那么该数字出现的次数肯定比剩下所有的数出现的次数之和还要大；
-2. 设两个变量，一个保存数字，一个保存次数；
+2. 设两个变量，*res* 表示数字，*index* 表示数字 *res* 出现的次数；
 3. 循环数组，若出现的数字保存的数字相同，次数加 *1* ，不同则减 *1* ；
-4. 得到次数变量最后置为 *1* 的数，也就是出现次数最多的那个数字。
+4. 最后将 *index* 置为 *1* 的数字 *res* 就是可能就是出现次数最多的那个数字。
 5. 判断该数字出现次数是否大于数组长度的一半。
 
 方法二：
@@ -1091,6 +1093,148 @@ public int MoreThanHalfNum_Solution(int [] array) {
         aleft = aright;
         aright = temp; 
     }
+```
+
+---
+
+
+
+## 最小的K个数
+
+### 题目描述
+
+输入n个整数，找出其中最小的K个数。例如输入4,5,1,6,2,7,3,8这8个数字，则最小的4个数字是1,2,3,4。》
+
+> > 主要考察堆
+
+### 解题思路
+
+方法一：
+
+1. 冒泡排序：每次将最小的数咕噜咕噜到最后面
+2. 咕噜 K 次，最后面的 K 个数就是要求的
+
+方法二：
+
+1. 将 K 个数放入数组中，第一个是这 K 个数中最小的
+2. 将剩下的数依次和第一个比较，若该数小，则替换数组中第一个元素，并将该数放入正确的位置
+
+方法三：
+
+1. 使用大顶堆替代数组来保存 K 个数，那么堆顶就是 K 个数的最大值
+2. 将剩下的数依次和堆顶比较，若该数小，则替换堆顶，重新调整
+
+### 代码
+
+```java
+// 方法三
+// 建大顶堆
+public static void creatHeap(int[] arr, int n) {
+    for (int i = (n - 1) / 2; i >= 0; i--) {
+        percolateDown(arr, i, n);
+    }
+}
+
+// 删除栈顶元素并调整
+private static void deleteHeap(int[] arr, int data, int n) {
+    arr[0] = data;
+    percolateDown(arr, 0, n);
+}
+
+// 下滤
+private static void percolateDown(int[] arr, int i, int n) {
+    // 第一个叶子结点的父结点
+    int fatherdata = arr[i];
+    // 该父结点左孩子的索引
+    int child = 2 * i + 1;
+    while (child <= n) {
+        // 判断左孩子和右孩子较大的那个
+        if (child + 1 <= n && arr[child + 1] > arr[child]) {
+            child += 1;
+        }
+        // 若父结点比孩子结点都大，直接跳出
+        if (fatherdata > arr[child]) {
+            break;
+        }
+        // 调整父结点和子结点
+        arr[i] = arr[child];
+        arr[child] = fatherdata;
+        i = child;
+        child = i * 2 + 1;
+    }
+}
+
+public static ArrayList<Integer> GetLeastNumbers_Solution(int[] input, int k) {
+    ArrayList<Integer> list = new ArrayList<Integer>();
+    if (input == null || input.length < k) {
+        return list;
+    }
+    creatHeap(input, k - 1);
+    for (int i = k; i < input.length; i++) {
+        // 是否比堆顶元素大
+        if (input[i] < input[0]) {
+            deleteHeap(input, input[i], k - 1);
+        }
+    }
+    for (int i = 0; i < k; i++) {
+        list.add(input[i]);
+    }
+    return list;
+}
+```
+
+---
+
+
+
+## 连续子数组的最大和
+
+### 题目描述
+
+HZ偶尔会拿些专业问题来忽悠那些非计算机专业的同学。今天测试组开完会后,他又发话了:在古老的一维模式识别中,常常需要计算连续子向量的最大和,当向量全为正数的时候,问题很好解决。但是,如果向量中包含负数,是否应该包含某个负数,并期望旁边的正数会弥补它呢？例如:{6,-3,-2,7,-15,1,2,2},连续子向量的最大和为8(从第0个开始,到第3个为止)。给一个数组，返回它的最大连续子序列的和，你会不会被他忽悠住？(子向量的长度至少是1)
+
+> 最大子序和问题
+
+### 解题思路
+
+方法一：
+
+1. 设置两个变量： *maxsum* 保存最大值，*thissum* 保存到当前数字为止的累加和
+2. 若 *thissum* 为正，则继续累加
+
+方法二：
+
+1. 动态规划的思想：每次比较当前数 和 当前数字与其之前最大累加和的和
+2. 公式：$ f(x) = max(array[i], f(i-1) + array[i]) $
+
+### 代码
+
+```java
+// 代码一
+public class Solution {
+    public int FindGreatestSumOfSubArray(int[] array) {
+        int maxsum = array[0], thissum = array[0];
+		for (int i = 1; i < array.length; i++) {
+			thissum = thissum < 0 ? array[i] : thissum + array[i];
+			maxsum = thissum > maxsum ? thissum : maxsum;
+		}
+		return maxsum;
+    }
+}
+```
+
+```java
+// 代码二
+public class Solution {
+    public int FindGreatestSumOfSubArray(int[] array) {
+        int maxsum = array[0], thissum = array[0];
+		for (int i = 1; i < array.length; i++) {
+			thissum = Math.max(array[i], thissum + array[i]);
+			maxsum = Math.max(maxsum, thissum);
+		}
+		return maxsum;
+    }
+}
 ```
 
 
