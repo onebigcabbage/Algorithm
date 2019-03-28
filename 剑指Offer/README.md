@@ -19,6 +19,7 @@
 - [数组中出现次数超过一半的数字](#数组中出现次数超过一半的数字) 
 - [最小的K个数](#最小的K个数) 
 - [连续子数组的最大和](#连续子数组的最大和) 
+- [把数组排成最小的数](#把数组排成最小的数) 
 
 
 
@@ -1237,5 +1238,58 @@ public class Solution {
 }
 ```
 
+---
 
+
+
+## 把数组排成最小的数
+
+## 题目描述
+
+输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。例如输入数组{3，32，321}，则打印出这三个数字能排成的最小数字为321323。
+
+### 解题思路
+
+方法一：
+
+1. 参考字符串的排序，对数组进行全排列
+2. 然后选出最小的那个
+3. *n* 个数字共有 n！个排列，时间复杂度太高
+
+方法二：
+
+1. 若 ab > ba ，说明 b 应该放在 a 的前面，比如 5，31
+2. 根据这个规则，可以使用冒泡排序，对数字两两比较，将该放在后面的 b 咕噜到最后一位。比如 5，31，4。5肯定是放在最后一位的
+3. 每次咕噜一个最大的到数组后面，最后将数组转换为字符串
+
+### 代码
+
+```java
+// 方法二
+import java.util.ArrayList;
+import java.math.BigInteger;
+public class Solution {
+    public String PrintMinNumber(int [] numbers) {
+        if (numbers.length == 0) return "";
+        String str = "";
+        for (int i = 0; i < numbers.length - 1; i++) {
+			for (int j = 0; j < numbers.length - i - 1; j++) {
+                // 给定的数字可能超出Integer的最大范围
+				BigInteger a = new BigInteger(numbers[j] + "" + numbers[j + 1]);
+				BigInteger ra = new BigInteger(numbers[j + 1] + "" + numbers[j]);
+                // 若数组 ab > ba，将 a 和 b 互换
+				if (a.compareTo(ra) == 1) {
+					int temp = numbers[j];
+					numbers[j] = numbers[j + 1];
+					numbers[j + 1] = temp;
+				}
+			}
+		}
+        for (int i = 0; i < numbers.length; i++) {
+			str += String.valueOf(numbers[i]);
+		}
+        return str;
+    }
+}
+```
 
