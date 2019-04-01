@@ -20,6 +20,10 @@
 - [最小的K个数](#最小的K个数) 
 - [连续子数组的最大和](#连续子数组的最大和) 
 - [把数组排成最小的数](#把数组排成最小的数) 
+- [丑数](#丑数) 
+- [第一个只出现一次的字符](#第一个只出现一次的字符) 
+- [数组中的逆序对](#数组中的逆序对) 
+- [两个链表的第一个公共结点](#两个链表的第一个公共结点) 
 
 
 
@@ -1291,5 +1295,236 @@ public class Solution {
         return str;
     }
 }
+```
+
+---
+
+
+
+## 丑数
+
+### 题目描述
+
+把只包含质因子2、3和5的数称作丑数（Ugly Number）。例如6、8都是丑数，但14不是，因为它包含质因子7。 习惯上我们把1当做是第一个丑数。求按从小到大的顺序的第N个丑数。
+
+### 解题思路
+
+方法一：
+
+1. 丑数最后肯定能被 2，3，5 这三个数整除
+2. 暴力从 1 开始解决，缺点是不是丑数的数字也会进行计算。提交显示超时
+
+方法二：
+
+![1553828949800](./pics/uglynum.png)
+
+> 借用一位牛友的回答 -> [点此查看原回答](<https://www.nowcoder.com/questionTerminal/6aa9e04fc3794f68acf8778237ba065b?toCommentId=1314313>) 
+
+### 代码
+
+```java
+// 方法一
+public class Solution {
+    public static int GetUglyNumber_Solution(int index) {
+    	if (index <= 0)
+    		return 0;
+    	int count = 0, number = 0;
+    	while (count < index) {
+    		number++;
+    		if (isUgly(number)) {
+    			count++;
+    		}
+    	}
+    	System.out.println(number);
+        return number;
+    }
+    
+    private static boolean isUgly(int number) {
+    	while (number % 2 == 0) {
+    		number /= 2;
+    	}
+    	while (number % 3 == 0) {
+    		number /= 3;
+    	}
+    	while (number % 5 == 0) {
+    		number /= 5;
+    	}
+    	return (number == 1) ? true : false;
+	}
+    
+}
+
+```
+
+```java
+// 方法二
+public class Solution {
+	public int GetUglyNumber_Solution(int index) {
+		if (index <= 0)
+    		return 0;
+		int[] res = new int[index];
+		res[0] = 1;
+		int l1 = 0, l2 = 0, l3 = 0;
+		for (int i = 1; i < index; i++) {
+			res[i] = findMin(res[l1] * 2, res[l2] * 3, res[l3] * 5);
+			if (res[i] == res[l1] * 2)
+				l1++;
+			if (res[i] == res[l2] * 3)
+				l2++;
+			if (res[i] == res[l3] * 5)
+				l3++;
+		}
+		System.out.println(res[index - 1]);
+		return res[index - 1];
+    }
+    
+    
+	private int findMin(int i, int j, int k) {
+		int min = Math.min(i, j);
+		return Math.min(min, k);
+	}
+    
+}
+```
+
+---
+
+
+
+## 第一个只出现一次的字符
+
+### 题目描述
+
+在一个字符串 (0<=字符串长度<=10000，全部由字母组成) 中找到第一个只出现一次的字符,并返回它的位置, 如果没有则返回 -1（需要区分大小写）.
+
+### 解题思路
+
+1. 使用哈希表存储字母，每次出现值就加 1
+2. 遍历字符串，并从哈希表中取出其 value ，如果是 1 ，返回位置
+
+### 代码
+
+```java
+import java.util.HashMap;
+public class Solution {
+    public int FirstNotRepeatingChar(String str) {
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+		for (int i = 0; i < str.length(); i++) {
+			char key = str.charAt(i);
+			if (!map.containsKey(key)) {
+				map.put(key, 1);
+			}else {
+				int count = map.get(key);
+				map.put(key, ++count);
+			}
+		}
+		int pos = -1;
+		for (int i = 0; i < str.length(); i++) {
+			if (map.get(str.charAt(i)) == 1)	
+				return i;
+		}
+        return pos;
+    }
+}
+```
+
+---
+
+
+
+## 数组中的逆序对
+
+### 题目描述
+
+在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,求出这个数组中的逆序对的总数P。并将P对1000000007取模的结果输出。 即输出P%1000000007
+
+### 解题思路
+
+方法一：
+
+1. 遍历数组，对每个数都与其后面的数比较
+2. 时间复杂度 \[O(n^2)\] ，超时未通过
+
+方法二：
+
+1. 
+
+### 代码
+
+```java
+// 方法一  不通过
+private static int InversePairs(int[] array) {
+    int P = 0;
+    for (int i = 0; i < array.length - 1; i++) {
+        for (int j = i + 1; j < array.length; j++) {
+            if (array[i] > array[j]) {
+                P++;
+            }
+        }
+    }
+    return P % 1000000007;
+}
+```
+
+---
+
+
+
+## 两个链表的第一个公共结点
+
+### 题目描述
+
+输入两个链表，找出它们的第一个公共结点。
+
+### 解题思路
+
+1. 两个链表的公共结点表示：从该结点往后都是一样的。
+2. 遍历两个链表得到长度，那么长度差那一部分肯定不是公共结点，接着一块比较就可以了
+3. 如下图所示：
+
+![](./pics/36.png)
+
+### 代码
+
+```java
+public class Solution {
+
+	public ListNode FindFirstCommonNode(ListNode pHead1, ListNode pHead2) {
+		if (pHead1 == null || pHead2 == null) {
+			return null;
+		}
+		int len1 = 0, len2 = 0;
+		ListNode temp1 = pHead1;
+		ListNode temp2 = pHead2;
+		while (temp1 != null) {
+			len1++;
+			temp1 = temp1.next;
+		}
+		while (temp2 != null) {
+			len2++;
+			temp2 = temp2.next;
+		}
+		
+		temp1 = pHead1;
+		temp2 = pHead2;
+		
+		if (len1 > len2) {
+			for (int i = 0; i < len1 - len2; i++) {
+				temp1 = temp1.next;
+			}
+		}else {
+			for (int i = 0; i < len1 - len2; i++) {
+				temp2 = temp2.next;
+			}
+		}
+		
+		while (temp1 != null && temp1 != temp2) {
+			temp1 = temp1.next;
+			temp2 = temp2.next;
+		}
+		return temp1;
+    }
+}
+
 ```
 
