@@ -24,6 +24,10 @@
 - [第一个只出现一次的字符](#第一个只出现一次的字符) 
 - [数组中的逆序对](#数组中的逆序对) 
 - [两个链表的第一个公共结点](#两个链表的第一个公共结点) 
+- [数字在排序数组中出现的次数](#数字在排序数组中出现的次数) 
+- [二叉树的深度](#二叉树的深度) 
+- [平衡二叉树](#平衡二叉树) 
+- [数组中只出现一次的数字](#数组中只出现一次的数字) 
 
 
 
@@ -1526,5 +1530,328 @@ public class Solution {
     }
 }
 
+```
+
+---
+
+
+
+## 数字在排序数组中出现的次数
+
+### 题目描述
+
+统计一个数字在排序数组中出现的次数。
+
+### 解题思路
+
+1. 最容易想到的就是遍历数组，但题目肯定不是考察这个
+2. 排序数组找数，想到的是二分查找，根据题意，使用二分查找到该数第一次出现和最后一次出现的位置，相减就是次数了
+3. 当然也可以使用二分查找到该数第一次出现的位置，依次往后遍历
+
+### 代码
+
+```java
+public class Solution {
+    public int GetNumberOfK(int [] array , int k) {
+       if (array.length == 0) {
+			return 0;
+		}
+		int first = getFirstK(array, k, 0, array.length - 1);
+		int last = getLastK(array, k, 0, array.length - 1);
+		if (first != -1 && last != -1) {
+			return last - first + 1;
+		}
+		return 0;
+    }
+    
+    /**
+	 * 递归二分查找
+	 * 寻找 k 第一个出现的索引
+	 */
+	public int getFirstK(int[] array, int k, int i, int j) {
+		if (i > j) {
+			return -1;
+		}
+		int middle = (i + j) / 2;
+		// 中间数字刚好等于 k，但是不确定是第一个出现的 k
+		if (array[middle] == k) {
+			// 若前面数字不等于 k，说明此中间数字是第一个出现的 k
+			if (middle == 0 || (middle > 0 && array[middle - 1] != k)) {
+				return middle;
+				// 前面数字等于 k,查找数组前半段
+			} else {
+				j = middle - 1;
+			}
+			// 查找数组后半段
+		} else if (array[middle] > k) {
+			j = middle - 1;
+			// 查找数组前半段
+		} else {
+			i = middle + 1;
+		}
+		return getFirstK(array, k, i, j);
+	}
+	
+	/**
+	 *
+	 * 寻找 k 最后一个出现的索引
+	 */
+	public int getLastK(int[] array, int k, int i, int j) {
+		if (i > j) {
+			return -1;
+		}
+		int middle = (i + j) / 2;
+		if (array[middle] == k) {
+			if (middle == array.length - 1 || (middle < array.length - 1 && array[middle + 1] != k)) {
+				return middle;
+			} else {
+				i = middle + 1;
+			}
+		} else if (array[middle] > k) {
+			j = middle - 1;
+		} else {
+			i = middle + 1;
+		}
+		return getLastK(array, k, i, j);
+	}
+    
+    /**
+	 * 非递归二分查找
+	 * 寻找 k 最后一个出现的索引
+	 */
+	public int getLastK(int[] array, int k, int i, int j) {
+		if (i > j) {
+			return -1;
+		}
+		int middle = (i + j) / 2;
+        while (i <= j) {
+            if (array[middle] == k) {
+                if (middle == array.length - 1 || (middle < array.length - 1 && array[middle + 1] != k)) {
+                    return middle;
+                } else {
+                    i = middle + 1;
+                }
+            } else if (array[middle] > k) {
+                j = middle - 1;
+            } else {
+                i = middle + 1;
+            }
+            middle = (i + j) / 2;
+        }
+        return -1;
+	}
+    
+
+}
+```
+
+---
+
+
+
+## 二叉树的深度
+
+### 题目描述
+
+输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路径，最长路径的长度为树的深度。
+
+### 解题思路
+
+如下二叉树：
+
+![](./pics/38tree.png)
+
+方法一：递归
+
+![](./pics/38digui.png)
+
+方法二：非递归
+
+1. 递归的方法都可以换成循环的方式
+2. 使用队列将每层结点都放进去，循环每层结点的个数，依次出队，将每个结点的子结点入队
+
+### 代码
+
+```java
+// 方法一：递归
+public class Solution {
+    public int TreeDepth(TreeNode root) {
+        if (root == null)
+    		return 0;
+        int nleft = TreeDepth(root.left);
+        int nright = TreeDepth(root.right);
+        return nleft > nright ? nleft + 1 : nright + 1;
+    }
+}
+```
+
+```java
+// 方法二：非递归
+import java.util.Queue;
+import java.util.LinkedList;
+public class Solution {
+    public int TreeDepth(TreeNode root) {
+        if (root == null)
+    		return 0;
+        int depth = 0;
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        queue.add(root);
+        while(queue != null) {
+        	depth++;
+            // 循环每一层的结点
+        	for (int i = 0; i < queue.size(); i++) {
+        		TreeNode node = queue.poll();
+        		if (node.left != null) {
+        			queue.add(node.left);
+        		}
+        		if (node.right != null) {
+        			queue.add(node.right);
+        		}
+			}
+        }
+    	return depth;
+    }
+}
+```
+
+---
+
+
+
+## 平衡二叉树
+
+### 题目描述
+
+输入一棵二叉树，判断该二叉树是否是平衡二叉树。
+
+### 解题思路
+
+方法一：
+
+1. 从根节点开始计算每个结点左右子树的深度，若深度之差不超过 1 ，则是一颗平衡二叉树
+2. 缺点：在判断每个结点的时候，会多次计算其左右结点的深度，导致重复计算
+
+方法二：
+
+1. 既然知道方法一会大量重复的计算，可以按照后续遍历的方式，在遍历到一个结点的时候，已经遍历过其左右结点
+2. 递归过程图可参考上题
+
+### 代码
+
+```java
+// 方法一
+public class Solution {
+    public boolean IsBalanced_Solution(TreeNode root) {
+        if (root == null) {
+			return true;
+		}
+		int left = treeDepth(root.left);
+		int right = treeDepth(root.right);
+		int diff = left - right;
+		if (diff > 1 || diff < -1) {
+			return false;
+		}
+		return IsBalanced_Solution(root.left) && IsBalanced_Solution(root.right);
+    }
+    private int treeDepth(TreeNode node) {
+		if (node == null)
+			return 0;
+		int left = treeDepth(node.left);
+		int right = treeDepth(node.right);
+		
+		return left > right ? left + 1 : right + 1;
+	}
+
+}
+```
+
+
+
+```java
+// 方法二
+public class Solution {
+    boolean flag = true;
+	
+	public boolean IsBalanced_Solution(TreeNode root) {
+		if (root == null) {
+			return true;
+		}
+		isBalanced(root);
+		return flag;
+    }
+
+	private int isBalanced(TreeNode node) {
+		if (node == null)
+			return 0;
+		int left = isBalanced(node.left);
+		int right = isBalanced(node.right);
+		int diff = left - right;
+		if (diff > 1 || diff < -1) {
+			flag = false;
+            return;
+		}
+		return left > right ? left + 1 : right + 1;
+	}
+}
+```
+
+---
+
+
+
+## 数组中只出现一次的数字
+
+## 题目描述
+
+一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
+
+### 解题思路
+
+1. 两个相同的数进行异或运算结果为0，一个数和 0 进行异或的结果是它本身，所以整个数组进行异或，最后的结果肯定是那 **两个只出现一次的数字的异或结果** ，比如数组 { 2, 4, 3, 6, 3, 2, 5, 5 } 中所有数的异或结果为 (0 0 1 0)，等于 {4, 6} 的异或结果
+2. 两个不同数字的异或结果中肯定包含至少 1 ，这些 1 就是两个数中不同的位，取最左边的 1 ，假设是第 2 位，将数组里面的数根据第 2 位是否包含 1 划分为两部分，目的是将两个不同的数分开，那么相同的数肯定在一块，因为相同数所有的位都相同。比如上面的数组会分为 { 2, 3, 6, 3, 2} 和 { 4, 5, 5 }
+3. 将两部分分别异或，相同的数就会抵消为 0，只剩下不同的数
+
+### 代码
+
+```java
+//num1,num2分别为长度为1的数组。传出参数
+//将num1[0],num2[0]设置为返回结果
+public class Solution {
+    public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
+        if (array == null || array.length <2)
+			return;
+		int length = array.length;
+		int flag = 0;
+		for (int i = 0; i < length; i++) {
+			flag ^= array[i];
+		}
+		
+		int index = findIndex(flag);
+		
+		num1[0] = 0;
+		num2[0] = 0;
+		for (int i = 0; i < length; i++) {
+			if (isBit1(array[i], index)) {
+				num1[0] ^= array[i];
+			} else {
+				num2[0] ^= array[i];
+			}
+		}
+    }
+    
+    private boolean isBit1(int i, int index) {
+		return ((i >> index) & 1) == 1;
+	}
+
+
+	private int findIndex(int flag) {
+		int index = 0;
+		while ((flag & 1) == 0) {
+			flag >>= 1;
+			index++;
+		}
+		return index;
+	}
+}
 ```
 
