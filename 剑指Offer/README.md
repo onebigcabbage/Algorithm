@@ -28,8 +28,7 @@
 - [二叉树的深度](#二叉树的深度) 
 - [平衡二叉树](#平衡二叉树) 
 - [数组中只出现一次的数字](#数组中只出现一次的数字) 
-
-
+- [和为S的连续正数序列](#和为S的连续正数序列) 
 
 
 
@@ -1852,6 +1851,48 @@ public class Solution {
 		}
 		return index;
 	}
+}
+```
+
+---
+
+
+
+## 和为S的连续正数序列
+
+### 输出描述:
+
+输出所有和为S的连续正数序列。序列内按照从小至大的顺序，序列间按照开始数字从小到大的顺序
+
+### 解题思路
+
+![](./pics/41.png)
+
+### 代码
+
+```java
+import java.util.ArrayList;
+public class Solution {
+    public ArrayList<ArrayList<Integer> > FindContinuousSequence(int sum) {
+       ArrayList<ArrayList<Integer>> allList = new ArrayList<ArrayList<Integer>>();
+		int left = 1, right = 2;
+		while (left < right) {
+			int cursum = (left + right) * (right - left + 1) / 2;
+			if (cursum == sum) {
+				ArrayList<Integer> list = new ArrayList<Integer>();
+				for (int i = left; i <= right; i++) {
+					list.add(i);
+				}
+				allList.add(list);
+				left++;
+			} else if (cursum < sum) {
+				right++;
+			} else {
+				left++;
+			}
+		}
+		return allList;
+    }
 }
 ```
 
