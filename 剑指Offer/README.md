@@ -29,6 +29,8 @@
 - [平衡二叉树](#平衡二叉树) 
 - [数组中只出现一次的数字](#数组中只出现一次的数字) 
 - [和为S的连续正数序列](#和为S的连续正数序列) 
+- [和为S的两个数字](#和为S的两个数字) 
+- [左旋转字符串](#左旋转字符串) 
 
 
 
@@ -1864,11 +1866,11 @@ public class Solution {
 
 输出所有和为S的连续正数序列。序列内按照从小至大的顺序，序列间按照开始数字从小到大的顺序
 
-### 解题思路
+### 解题思路：
 
 ![](./pics/41.png)
 
-### 代码
+### 代码：
 
 ```java
 import java.util.ArrayList;
@@ -1895,4 +1897,144 @@ public class Solution {
     }
 }
 ```
+
+---
+
+
+
+## 和为S的两个数字
+
+### 输出描述:
+
+输入一个递增排序的数组和一个数字S，在数组中查找两个数，使得他们的和正好是S，如果有多对数字的和等于S，输出两个数的乘积最小的。对应每个测试案例，输出两个数，小的先输出。
+
+### 解题思路：
+
+1. 同样的方法，设置前后两个指针，若当前两数之和为 *sum*，添加到 *List* 中；若大于 *sum* ，则将后指针前移；反之，前指针后移
+2. 若有多个组合满足条件，那么先碰到的组合乘积肯定是最小的
+
+### 代码：
+
+```java
+import java.util.ArrayList;
+public class Solution {
+    public ArrayList<Integer> FindNumbersWithSum(int [] array,int sum) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        if (array.length < 2 || array == null)
+        	return list;
+        int start = 0, end = array.length - 1;
+        while (start < end) {
+        	if (array[start] + array[end] == sum) {
+        		list.add(array[start]);
+        		list.add(array[end]);
+        		return list;
+        	}else if (array[start] + array[end] > sum){
+				end--;
+			} else {
+				start++;
+			}
+        }
+        return list;
+    }
+}
+```
+
+
+
+---
+
+
+
+## 左旋转字符串
+
+### 输出描述:
+
+字符序列 ```S=”abcXYZdef”``` ,要求输出循环左移3位后的结果，即 ```“XYZdefabc”```。是不是很简单？OK，搞定它！
+
+### 解题思路：
+
+- #### 翻转单词顺序
+
+  首先理解反转句子中单词的顺序，但是单词内的字符顺序不变。例如将 ```I am a student.``` 反转为 ```student. a am I``` 。
+
+  - ##### 方法
+
+    1. 可以先将整个字符串反转为：```.tneduts a ma I``` ，此时单词的顺序和单词内部的顺序都进行了翻转。
+
+    2. 以每个单词为单位，将单词内部顺序进行翻转，变为正常顺序。
+
+  - ##### 实现
+
+    ```java
+    public class Solution {
+        
+        public static void reverseSentence(String str) {
+            if (str.length == 0 || str == null)
+                return str;
+            char[] ans = str.toCharArray();
+            reverse(ans, 0, str.length() - 1);
+            System.out.Println(new String(ans));
+            
+            int start = 0, end = 0;
+            while (end < ans.length) {
+                if (ans[end] == ' ' || end == ans.length - 1) {
+                    reverse(ans, start, end - 1);
+                }
+                end++;
+            }
+            System.out.Println(new String(ans));
+        }
+    
+    	private static void reverse(char[] ans, int i, int j) {
+    		while (i < j) {
+    			char temp = ans[i];
+    			ans[i] = ans[j];
+    			ans[j] = temp;
+    			i++;
+    			j--;
+    		}
+    	}
+    	
+    	public static void main(String[] args) {
+    		reverseSentence("I am a student.");
+    	}
+    
+    }
+    ```
+
+- #### 左旋转字符串
+
+  理解了单词顺序的翻转，再看左旋转字符串。比如 ```hello world```  翻转后的结果 ```world hello``` 可以看作**原字符串的六个字符转移到了最后面**。
+
+  - ##### 方法
+
+    所以左旋转字符串可以看做以下操作：
+
+    1. 将先将前 *n* 位字符和后面所有字符分别翻转，比如给定 ```“XYZdefabc”``` ，其中 *n = 3* ，翻转得到 ```“ZYXcbafed”``` 。
+    2. 再将整个字符进行翻转，得到 ```“defabcXYZ”``` ，刚好是我们想要的结果。
+
+  - ##### 实现
+
+    ```java
+    public class Solution {
+        public String LeftRotateString(String str,int n) {
+            if (str == null || str.length() == 0)
+    			return str;
+    		char[] ans = str.toCharArray();
+    		reverse(ans, 0, n - 1);
+    		reverse(ans, n, ans.length - 1);
+    		reverse(ans, 0, ans.length - 1);
+    		return new String(ans);
+        }
+        private void reverse(char[] ans, int i, int j) {
+    		while (i < j) {
+    			char temp = ans[i];
+    			ans[i] = ans[j];
+    			ans[j] = temp;
+    			i++;
+    			j--;
+    		}
+    	}
+    }
+    ```
 
