@@ -31,6 +31,11 @@
 - [和为S的连续正数序列](#和为S的连续正数序列) 
 - [和为S的两个数字](#和为S的两个数字) 
 - [左旋转字符串](#左旋转字符串) 
+- [翻转单词顺序列](#翻转单词顺序列) 
+- [扑克牌顺子](#扑克牌顺子) 
+- [孩子们的游戏(圆圈中最后剩下的数)](#孩子们的游戏(圆圈中最后剩下的数)) 
+- [不用加减乘除做加法](#不用加减乘除做加法) 
+- [把字符串转换成整数](#把字符串转换成整数) 
 
 
 
@@ -1802,7 +1807,7 @@ public class Solution {
 
 ## 数组中只出现一次的数字
 
-## 题目描述
+### 题目描述
 
 一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
 
@@ -1862,7 +1867,7 @@ public class Solution {
 
 ## 和为S的连续正数序列
 
-### 输出描述:
+### 题目描述:
 
 输出所有和为S的连续正数序列。序列内按照从小至大的顺序，序列间按照开始数字从小到大的顺序
 
@@ -1904,7 +1909,7 @@ public class Solution {
 
 ## 和为S的两个数字
 
-### 输出描述:
+### 题目描述:
 
 输入一个递增排序的数组和一个数字S，在数组中查找两个数，使得他们的和正好是S，如果有多对数字的和等于S，输出两个数的乘积最小的。对应每个测试案例，输出两个数，小的先输出。
 
@@ -1947,7 +1952,7 @@ public class Solution {
 
 ## 左旋转字符串
 
-### 输出描述:
+### 题目描述:
 
 字符序列 ```S=”abcXYZdef”``` ,要求输出循环左移3位后的结果，即 ```“XYZdefabc”```。是不是很简单？OK，搞定它！
 
@@ -2037,4 +2042,238 @@ public class Solution {
     	}
     }
     ```
+
+---
+
+
+
+## 翻转单词顺序列
+
+### 题目描述:
+
+牛客最近来了一个新员工Fish，每天早晨总是会拿着一本英文杂志，写些句子在本子上。同事Cat对Fish写的内容颇感兴趣，有一天他向Fish借来翻看，但却读不懂它的意思。例如，“student. a am I”。后来才意识到，这家伙原来把句子单词的顺序翻转了，正确的句子应该是“I am a student.”。Cat对一一的翻转这些单词顺序可不在行，你能帮助他么？
+
+### 解题思路：
+
+见上题
+
+### 代码:
+
+```java
+public class Solution {  
+    public void reverse(char[] arr, int start, int end) {
+        while (start < end) {
+            char temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
+        }
+    }   
+    public String ReverseSentence(String str) {
+        if (str == null || str.length() < 1)
+            return str;
+        char[] arr = str.toCharArray();
+        reverse(arr, 0, arr.length - 1);
+        int i = 0, j = 1;
+        while (j < arr.length) {
+            if (arr[j] == ' ') {
+                reverse(arr, i, j - 1);
+                i = j + 1;
+            }
+            j++;
+        }
+        reverse(arr, i, arr.length - 1);
+        return new String(arr);
+    }
+}
+```
+
+---
+
+
+
+## 扑克牌顺子
+
+### 题目描述:
+
+从扑克牌中随机抽出 5 张牌，判断是不是一个顺子，即5张牌是不是连续的。2~10 为数字本身，A 看作 1，J 为11，Q 为 12,K 为 13，大小王看作任何数字。如果牌能组成顺子就输出true，否则就输出false。为了方便起见，可以认为大小王是0。
+
+### 解题思路：
+
+1. 将数组排序，因为 0 可以充当任意数字，用 0 填充数组中不连续的数字空缺，那么得到的数组仍算连续的。
+2. 若 0 的个数刚好等于数组中相邻数字之间的空缺总数，则输出true。
+
+### 代码:
+
+```java
+import java.util.Arrays;
+public class Solution {
+    public boolean isContinuous(int [] numbers) {
+        int countzeros = 0;
+        int mininterval= 0;
+        int length = numbers.length;
+        if (length < 5)
+            return false;
+        Arrays.sort(numbers);
+        for (int i = 0; i < length; i++) {
+            if (numbers[i] == 0)
+                countzeros++;
+        }
+        for (int i = countzeros; i < length - 1; i++) {
+            if (numbers[i] == numbers[i + 1])
+                return false;
+            mininterval += numbers[i + 1] - numbers[i] - 1;
+        }
+        return mininterval > countzeros ? false : true;
+    }
+}
+```
+
+---
+
+
+
+## 孩子们的游戏(圆圈中最后剩下的数)
+
+### 题目描述
+
+每年六一儿童节,牛客都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。HF作为牛客的资深元老,自然也准备了一些小游戏。其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。然后,他随机指定一个数m,让编号为0的小朋友开始报数。每次喊到m-1的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,并且不再回到圈中,从他的下一个小朋友开始,继续0...m-1报数....这样下去....直到剩下最后一个小朋友,可以不用表演,并且拿到牛客名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,哪个小朋友会得到这份礼品呢？(注：小朋友的编号是从0到n-1)
+
+### 解题思路:
+
+方法一：使用链表解决问题。
+
+### 代码:
+
+```java
+import java.util.LinkedList;
+public class Solution {
+    public int LastRemaining_Solution(int n, int m) {
+        if (n == 0 || m == 0)
+            return -1;
+        LinkedList<Integer> list = new LinkedList<>();
+        int index = 0;
+        for (int i = 0; i < n; i++) {
+            list.add(i);
+        }
+        while (list.size() > 1) {
+            index = (index - 1 + m) % list.size();
+            list.remove(index);
+        }
+        return list.get(0);
+    }
+}
+```
+
+---
+
+
+
+## 求1+2+3+...+n
+
+### 题目描述
+
+求1+2+3+...+n，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
+
+### 解题思路:
+
+1. 解这种求和问题，首先想到的就是循环和递归。题目中循环的方法已经堵死了，考虑使用递归。
+
+2. 不能使用判断语句，那就考虑使用布尔运算。
+
+### 代码:
+
+```java
+public class Solution {
+    public int Sum_Solution(int n) {
+        int sum = n;
+        boolean flag = (n > 0) && ((sum += Sum_Solution(n-1)) > 0);
+        return sum;
+    }
+}
+```
+
+---
+
+
+
+## 不用加减乘除做加法
+
+### 题目描述
+
+写一个函数，求两个整数之和，要求在函数体内不得使用+、-、*、/四则运算符号。
+
+### 解题思路:
+
+1. 既然十进制的运算符不可用，那么考虑下用二进制的位运算代替。
+2. 二进制加法遵循 “逢二进一” ，比如 5 + 17 = 22 可以看作 0101 + 1 0001 = 1 0110，但是不允许使用 “+”，所以考虑与、非、异或、移位运算。
+3. 首先，**异或运算** 相当于二进制的每一位相加，但是没有进位。
+4. 然后，当只有 1 加 1 时才会进位，这里可以看成 **与运算** 再 **左移一位**。
+5. 最后，将结果 **相加** ，重复以上的步骤，直到不产生进位。
+
+### 代码:
+
+```java
+public class Solution {
+    public int Add(int num1,int num2) {
+        while (num2 != 0) {
+            int sum = num1 ^ num2;
+            int carry = (num1 & num2) << 1;
+            num1 = sum;
+            num2 = carry;
+        }
+        return num1;
+    }
+}
+```
+
+---
+
+
+
+## 把字符串转换成整数
+
+### 题目描述:
+
+![1559032965917](./pics/strtoint.png) 
+
+### 解题思路:
+
+字符转数字很好做，主要注意一些边界条件就可以了：
+
+1. 正负号
+2. 是否数字
+3. 是否溢出
+
+### 代码:
+
+```java
+public class Solution {
+    public int StrToInt(String str) {
+        if (str == "" || str.length() == 0)
+            return 0;
+        int integer = 0;
+        boolean flag1 = false;
+        char[] arr = str.toCharArray();
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == '+'){
+                continue;
+            }else if (arr[i] == '-'){
+                flag1 = true;
+                continue;
+            }
+            if (arr[i] > '0' && arr[i] < '9') {
+                int flag2 = flag1 ? -1 : 1;
+                integer = integer * 10 + flag2 * (arr[i] - 48);
+                if ((flag1 && integer < 0x80000000) || (!flag1 && integer > 0x7fffffff))
+                    return 0;
+            }else {
+                return 0;
+            }
+        }
+        return integer;
+    }
+}
+```
 
