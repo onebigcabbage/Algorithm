@@ -11,6 +11,8 @@
   - [快速排序](#快速排序) 
 - [归并排序](#归并排序) 
 - [基数排序](#基数排序) 
+- [计数排序](#计数排序) 
+- [桶排序](#桶排序) 
 
 ### 排序算法框架
 
@@ -20,11 +22,16 @@
 
 ![](./sort/analysis.png) 
 
-
-
 ### 插入排序
 
 #### 直接插入排序
+
+1. 从第一个元素开始，认为该元素是已排序的。
+2. 取出下一元素，与前面已经排好序的部分进行比较。
+3. 若比排好序部分的元素小，则将排好序部分的元素后移到下一位置。
+4. 遍历数组，直至结束。
+
+最好的情况是数组有序，时间复杂度为 $O(n)$ ，平均复杂度是 $O(n^2)$ 。
 
 ![](./sort/insert.gif)
 
@@ -53,7 +60,9 @@ public class Solution {
 
 #### 希尔排序
 
-![](./sort/shell.png)  
+![](./sort/shell.png) 
+
+时间复杂度为 $O(nlogn)$ 。
 
 ```java
 public class Solution {
@@ -92,7 +101,13 @@ public class Solution {
 
 #### 简单选择排序
 
+1. 从未排序的初始数组中寻找最小元素放置首位。
+2. 从剩余元素中继续寻找最小元素，放到已排序序列的尾部
+3. 遍历数组，直至结束。
 
+时间复杂度为 $O(n^2)$ 。
+
+![](./sort/selection.gif) 
 
 ```java
 public class Solution {
@@ -125,6 +140,10 @@ public class Solution {
 #### 堆排序
 
 
+
+时间复杂度为 $O(nlogn)$ 。
+
+![](./sort/heap.gif) 
 
 ```java
 public class Solution {
@@ -199,13 +218,17 @@ public class Solution {
 }
 ```
 
-
-
 ### 交换排序
 
 #### 冒泡排序
 
+1. 依次比较相邻的两个元素，若前者比后者大则交换，这样数组的最后一位是最大值。
+2. 在除了最后一位的未排序数组上继续重复以上步骤，每一步都能找到一个最大值放在后面。
+3. 遍历数组，直至结束。
 
+最好的情况是数组已排序，时间复杂为 $O(n)$ ，平均时间复杂度为 $O(n^2)$ 。
+
+![](./sort/bubble.gif) 
 
 ```java
 import java.util.Arrays;
@@ -234,13 +257,16 @@ public class Solution {
 		bubbleSort(nums);
 		System.out.println(Arrays.toString(nums));
 	}
-
 }
 ```
 
 #### 快速排序
 
 
+
+时间复杂度为 $O(nlogn)$ 。
+
+![](./sort/quick.gif) 
 
 ```java
 public class Solution {
@@ -264,7 +290,7 @@ public class Solution {
 			return;
 		int index = partition(array, left, right);
 		
-		System.out.println(index);
+		// System.out.println(index);
 		
 		sort(array, left, index - 1);
 		sort(array, index + 1, right);
@@ -283,7 +309,7 @@ public class Solution {
             swap(array, left, right);
         }
     	array[right] = pivot;
-        System.out.println(Arrays.toString(array));
+        // System.out.println(Arrays.toString(array));
         return right;
     }
 
@@ -295,14 +321,12 @@ public class Solution {
 
 	public static void main(String[] args) {
 		int[] array = {8, 1, 4, 9, 3, 5, 2, 7, 0, 6};
-		System.out.println(Arrays.toString(array));
+		// System.out.println(Arrays.toString(array));
 		sort(array, 0, array.length - 1);
 		System.out.println(Arrays.toString(array));
 	}
 }
 ```
-
-
 
 ### 归并排序
 
@@ -348,3 +372,24 @@ public class Solution {
 
 
 
+
+
+### 计数排序
+
+
+
+![](./sort/count.gif) 
+
+```java
+
+```
+
+### 桶排序
+
+
+
+
+
+### Reference
+
+https://www.cnblogs.com/guoyaohua/p/8600214.html 
