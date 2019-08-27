@@ -330,6 +330,8 @@ public class Solution {
 
 ### 归并排序
 
+
+
 ![](./sort/merge.gif)  
 
 ```java
@@ -370,18 +372,125 @@ public class Solution {
 
 ### 基数排序
 
+1. 找到数组中最大的数，确定最多一共有几位数。
+2. 按照每个数字的最后一位，放入辅助数组中；同时设置一个计数数组，统计以数字 i 结尾的数字个数。
+3. 将辅助数组中的元素重新放入原数组中，然后按照下一位继续重复以上动作。
 
+时间复杂度为 $O(n*k)$ 。
 
+![](./sort/radix.gif) 
 
+```java
+public class RadixSort {
+
+	public static void main(String[] args) {
+		int[] array = {3, 44, 38, 4, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 32};
+		int[] arr = radixSort(array);
+		System.out.println(Arrays.toString(arr));
+	}
+
+	private static int[] radixSort(int[] array) {
+		if (array == null || array.length < 2) {
+			return array;
+		}
+		// 根据最大值找到最大位数
+		int max = 0;
+		for (int i = 0; i < array.length; i++) {
+			max = Math.max(max, array[i]);
+		}
+		
+		int maxDigit = 0;
+		while (max != 0) {
+			max /= 10;
+			maxDigit++;
+		}
+		
+		// 第一维: 0~9
+		int[][] radix = new int[10][array.length];
+		// 该位为 i 的元素个数
+		int[] count = new int[10];
+		
+		int m = 1;
+		int n = 1;
+		
+		while (m <= maxDigit) {
+			for (int i = 0; i < array.length; i++) {
+				int lsd = (array[i] / n) % 10;
+				radix[lsd][count[lsd]] = array[i];
+				count[lsd]++;
+			}
+			for (int i = 0, k = 0; i < 10; i++) {
+				if (count[i] != 0) {
+					for (int j = 0; j < count[i]; j++) {
+						array[k++] = radix[i][j];
+					}
+				}
+				count[i] = 0;
+			}
+			n *= 10;
+			m++;
+		}
+		return array;
+	}
+
+}
+```
 
 ### 计数排序
 
+1. 找到数组中最小值和最大值，辅助数组的大小为两者之差。设最小值为 2，最大值为 9，则辅助数组大小为 7。
+2. 统计数组中每个元素出现的次数，减去最小值，存入辅助数组中。比如 2，存放在辅助数组的第 0 位，7 放在辅助数组的第 5 位。
+3. 最后反向填充数组。遍历原数组，依次将辅助数组中不为 0 的元素下标加最小值，放回原数组对应位置。
 
+时间复杂度为 $O(n + k)$ 。
 
 ![](./sort/count.gif) 
 
 ```java
+public class Solution {
 
+	public static void main(String[] args) {
+		int[] array = {8, 9, 4, 7, 2, 3, 5, 4, 6, 8};
+		int[] arr = countSort(array);
+		System.out.println(Arrays.toString(arr));
+	}
+
+	private static int[] countSort(int[] array) {
+		if (array.length == 0)
+			return array;
+		
+		int min = array[0], max = array[0];
+		
+		for (int i = 0; i < array.length; i++) {
+			if (min > array[i]) {
+				min = array[i];
+			}
+			if (max < array[i]) {
+				max = array[i];
+			}
+		}
+		
+		int[] count = new int[max - min + 1];
+		
+		for (int i = 0; i < array.length; i++) {
+			count[array[i] - min]++;
+		}
+		
+		int i = 0;
+		int index = 0;
+		while (index < array.length) {
+			if (count[i] != 0) {
+				array[index] = i + min;
+				count[i]--;
+				index++;
+			} else {
+				i++;
+			}
+		}
+		return array;
+	}
+	
+}
 ```
 
 ### 桶排序
