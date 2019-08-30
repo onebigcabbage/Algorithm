@@ -1,13 +1,22 @@
 # <center>剑指Offer解题思路</center>
 
-
-
+- [二维数组中的查找](#二维数组中的查找) 
+- [替换空格](#替换空格) 
+- [从尾到头打印链表](#从尾到头打印链表) 
 - [重建二叉树](#重建二叉树) 
+- [用两个栈实现队列](#用两个栈实现队列) 
+- [旋转数组的最小数字](#旋转数组的最小数字) 
+- [斐波那契数列](#斐波那契数列) 
+- [跳台阶](#跳台阶) 
 - [二进制中1的个数](#二进制中1的个数) 
 - [数值的整数次方](#数值的整数次方) 
 - [调整数组顺序使奇数位于偶数前面](#调整数组顺序使奇数位于偶数前面 ) 
+- [链表中倒数第k个结点](#链表中倒数第k个结点) 
+- [反转链表](#反转链表) 
+- [合并两个排序的链表](#合并两个排序的链表) 
 - [树的子结构](#树的子结构) 
 - [二叉树的镜像](#二叉树的镜像) 
+- [顺时针打印矩阵](#顺时针打印矩阵) 
 - [包含min函数的栈](#包含min函数的栈) 
 - [栈的压入、弹出序列](#栈的压入、弹出序列) 
 - [从上往下打印二叉树](#从上往下打印二叉树) 
@@ -54,6 +63,132 @@
 
 
 
+## 二维数组中的查找
+
+### 题目描述
+
+在一个二维数组中（每个一维数组的长度相同），每一行都按照从左到右递增的顺序排序，每一列都按照从上到下递增的顺序排序。请完成一个函数，输入这样的一个二维数组和一个整数，判断数组中是否含有该整数。
+
+### 解题思路
+
+既然给定了有顺序的数组，那么肯定不会是从头遍历了。可以从左下角考虑，比它小的肯定在其上面，比它大的肯定在其右边，问题解决了。
+
+### 代码
+
+```java
+public class Solution {
+    public boolean Find(int target, int [][] array) {
+        int row = array.length - 1;
+        int col = 0;
+        while (row >= 0 && col < array[0].length) {
+            if (target == array[row][col]) {
+                return true;
+            } else if (target < array[row][col]) {
+                row--;
+            } else {
+                col++;
+            }
+        }
+        return false;
+    }
+}
+```
+
+
+
+---
+
+## 替换空格
+
+### 题目描述
+
+请实现一个函数，将一个字符串中的每个空格替换成 “%20”。例如，当字符串为 We Are Happy. ​ 则经过替换之后的字符串为 We%20Are%20Happy。
+
+### 解题思路
+
+1. 首先遍历字符串，计算共有多少空格，然后扩充字符串的长度。
+2. 设置两个指针，头指针指向原始字符串的结尾，尾指针指向扩充后的结尾，从后往前遍历。
+3. 若头指针指向字符不是空格，把当前字符放到尾指针指向空间，同时两个指针前移一位；
+4. 若头指针指向字符是空格，尾指针前移三次，同时插入 %20，头指针前移一位；
+5. 遍历，直至条件结束。
+
+### 代码
+
+```java
+public class Solution {
+    public String replaceSpace(StringBuffer str) {
+        int len = str.length();
+        int numspace = 0;
+        for (int i = 0; i < len; i++) {
+            if (str.charAt(i) == ' ')
+                numspace++;
+        }
+        // 因为空格本身占了一个空间，所以扩充空间为空格数 * 2
+        int newlen = len + numspace * 2;
+        str.setLength(newlen);
+        
+        int left = len - 1;
+        int right = newlen - 1;
+        while (left >= 0 && right > left) {
+            if (str.charAt(left) == ' ') {
+                str.setCharAt(right--, '0');
+                str.setCharAt(right--, '2');
+                str.setCharAt(right--, '%');
+                left--;
+            } else {
+                str.setCharAt(right--, str.charAt(left--));
+            }
+        }
+        return str.toString();
+    }
+}
+```
+
+
+
+---
+
+## 从尾到头打印链表
+
+### 题目描述
+
+输入一个链表，按链表从尾到头的顺序返回一个ArrayList。
+
+### 解题思路
+
+![](./pics/03reverse.png) 
+
+### 代码
+
+```java
+public class Solution {
+    public ArrayList<Integer> printListFromTailToHead(ListNode listNode) {
+        ArrayList<Integer> array = new ArrayList<Integer>();
+        if (listNode == null)
+            return array;
+        ListNode pre = null;
+        ListNode next = null;
+        while (listNode != null) {
+            next = listNode.next;
+            listNode.next = pre;
+            pre = listNode;
+            listNode = next;
+        }
+        while (pre != null) {
+            array.add(pre.val);
+            pre = pre.next;
+        }
+        return array;
+    }
+}
+```
+
+
+
+---
+
+
+
 ## 重建二叉树
 
 ### 题目描述
@@ -97,7 +232,181 @@ public class Solution {
 }
 ```
 
+---
 
+
+
+## 用两个栈实现队列
+
+### 题目描述
+
+用两个栈来实现一个队列，完成队列的Push和Pop操作。 队列中的元素为int类型。
+
+### 解题思路
+
+1. 既然是实现队列，那么就要保证先进去的元素先出来。
+2. 可以先讲元素都放入一个栈中，这样所有的元素都是倒序。
+3. 将栈中元素都出栈，存入另外一个栈中，这样所有的元素顺序都变成正序了。不过要判断以下另一个栈是否为空，不为空的话，就不用放进去。
+
+### 代码
+
+```java
+import java.util.Stack;
+
+public class Solution {
+    Stack<Integer> stack1 = new Stack<Integer>();
+    Stack<Integer> stack2 = new Stack<Integer>();
+    
+    public void push(int node) {
+        stack1.push(node);
+    }
+    
+    public int pop() {
+        if (stack2.empty() && stack1.empty())
+            throw new RuntimeException();
+        if (stack2.empty()) {
+            while (!stack1.empty()) {
+                stack2.push(stack1.pop());
+            }
+        }
+        return stack2.pop();
+    }
+}
+```
+
+---
+
+
+
+## 旋转数组的最小数字
+
+### 题目描述
+
+把一个数组最开始的若干个元素搬到数组的末尾，我们称之为数组的旋转。输入一个非递减排序的数组的一个旋转，输出旋转数组的最小元素。例如数组 {3,4,5,1,2} 为 {1,2,3,4,5} 的一个旋转，该数组的最小值为 1。
+NOTE：给出的所有元素都大于 0，若数组大小为 0，请返回 0。
+
+### 解题思路
+
+1. 旋转数组中有两个非递减排序的数组，可以使用二分查找，从中间开始比较首尾。
+2. 若中间数大于等于头数，说明前面的数组仍是非减排序，将头数指针指向中间数，作为新的头数；反之，若中间数小于等于尾数，说明后面的数组仍然是非减排序，将尾数指针指向中间数，作为新的尾数。
+3. 当首尾指数相差 1 时，说明到了两个非递减排序的数组的分界点，尾数是分界点。
+4. 但是，如果出现像 {1,0,1,1,1} 这种首尾中指针元素都相同的序列时，则需要顺序遍历找到最小值。
+
+### 代码
+
+```java
+public class Solution {
+    public int minNumberInRotateArray(int [] array) {
+        if (array == null)
+            return 0;
+        int left = 0, right = array.length - 1;
+        int mid = 0;
+        while (array[left] >= array[right]) {
+            if (right - left == 1) {
+                mid = right;
+                break;
+            }
+            mid = (left + right) / 2;
+            if (array[left] == array[right] && array[mid] == array[left]) {
+                int temp = array[left];
+                for (int i = left; i <= right; i++) {
+                    if (temp > array[i]) {
+                        temp = array[i];
+                    }
+                }
+                return temp;
+            }
+            if (array[mid] >= array[left]) {
+                left = mid;
+            } else if (array[mid] <= array[right]) {
+                right = mid;
+            }
+        }
+        return array[mid];
+    }
+}
+```
+
+---
+
+## 斐波那契数列
+
+### 题目描述
+
+大家都知道斐波那契数列，现在要求输入一个整数n，请你输出斐波那契数列的第n项（从0开始，第0项为0）。
+
+### 解题思路
+
+
+
+### 代码
+
+```java
+public class Solution {
+	// 递归
+	public int Fibonacci(int n) {
+        if (n == 0)
+            return 0;
+        if (n == 1)
+            return 1;
+        return Fibonacci(n - 1) + Fibonacci(n - 2);
+    }
+	
+	// 非递归
+	public int Fibonacci1(int n) {
+        if (n == 0)
+            return 0;
+        if (n == 1)
+            return 1;
+        int f0 = 0;
+        int f1 = 1;
+        int fn = 0;
+        for (int i = 2; i <= n; i++) {
+            fn = f0 + f1;
+            f0 = f1;
+            f1 = fn;
+        }
+        return fn;
+    }
+}
+```
+
+---
+
+
+
+## 跳台阶
+
+### 题目描述
+
+一只青蛙一次可以跳上1级台阶，也可以跳上2级。求该青蛙跳上一个n级的台阶总共有多少种跳法（先后次序不同算不同的结果）。
+
+### 代码
+
+```java
+public class Solution {
+	
+	public int JumpFloor(int target) {
+        if(target==1 || target==2)
+        		return target;
+        return JumpFloor(target-1) + JumpFloor(target-2);
+    }
+	
+	public int JumpFloor2(int target) {
+        if(target==1 || target==2)    
+        	return target;
+        int jumpone = 1, jumptwo = 2;
+        while(target-- >= 3){
+            jumptwo = jumpone + jumptwo;
+            jumpone = jumptwo - jumpone;
+        }
+        return jumptwo;
+    }
+
+}
+```
+
+---
 
 
 
@@ -113,23 +422,23 @@ public class Solution {
 
 代码一：
 
- 　1. 判断整数二进制最右边一位是不是1，然后整体向右移一位，最前面补0，直至整个整数为0。</br>
- 　2. 例如整数10的二进制为0000 0000 0000 0000 0000 0000 0000 1010（Java的int类型占用4个字节，即32位）。只看后四位的话，右移一位变成0101，继续右移为0010、0001、0000，可见右移三次整数就变成0。若右移过程中最后一位为1，则记录下来。</br>
- 　3. 至于如何判断最后一位是否为1，可以把整数和1进行与操作判断结果是否为1即可。</br>
+ 　1. 判断整数二进制最右边一位是不是1，然后整体向右移一位，最前面补0，直至整个整数为0。
+ 　2. 例如整数10的二进制为0000 0000 0000 0000 0000 0000 0000 1010（Java的int类型占用4个字节，即32位）。只看后四位的话，右移一位变成0101，继续右移为0010、0001、0000，可见右移三次整数就变成0。若右移过程中最后一位为1，则记录下来。
+ 　3. 至于如何判断最后一位是否为1，可以把整数和1进行与操作判断结果是否为1即可。
  　4. 缺点：如果整数是负数，则代码一会报错，因为在对负数进行右移运算时，补的是1，这样会导致死循环。
 
 代码二：
 
- 　1. 优化：让整数和1进行与运算，判断整数的末位是否为1；让1左移，判断倒数第二位是否为1......。例如给定整数10，二进制为1010，和1即二进制0001进行与操作，结果不为1；让1左移一位，即0001变为0010，再和1与操作，结果为1，记录下来......。</br>
+ 　1. 优化：让整数和1进行与运算，判断整数的末位是否为1；让1左移，判断倒数第二位是否为1......。例如给定整数10，二进制为1010，和1即二进制0001进行与操作，结果不为1；让1左移一位，即0001变为0010，再和1与操作，结果为1，记录下来......。
  　2. 缺点：整数的二进制有多少个1就要循环多少次。
 
 代码三：
 
- 　1. 若整数的二进制最后一位为1，减1后最后一位变成0。例如1001 - 0001 = 1000.</br>
- 　2. 若整数的二进制最后一位不为1，最后那个1是第n位，则减1后第n位的1变成0，之后的0都变为1，之前的不变。例如1100，最右边的1在第2位，减1后：1100 - 0001 = 1011。</br>
- 　3. 总结：把整数减1，就是将整数的二进制最右边那个1之后的0都变成1。</br>
- 　4. 接着将整数和减1的结果做与运算，作用是将第n位后的1都变成0。例如1100减1后为1011，将1100和1011与运算后为1000。</br>
- 　5. 继续使用减1，与运算之后的数进行循环，直至整数变为0。</br>
+ 　1. 若整数的二进制最后一位为1，减1后最后一位变成0。例如1001 - 0001 = 1000。
+ 　2. 若整数的二进制最后一位不为1，最后那个1是第n位，则减1后第n位的1变成0，之后的0都变为1，之前的不变。例如1100，最右边的1在第2位，减1后：1100 - 0001 = 1011。
+ 　3. 总结：把整数减1，就是将整数的二进制最右边那个1之后的0都变成1。
+ 　4. 接着将整数和减1的结果做与运算，作用是将第n位后的1都变成0。例如1100减1后为1011，将1100和1011与运算后为1000。
+ 　5. 继续使用减1，与运算之后的数进行循环，直至整数变为0。
  　6. 优点：整数的二进制有多少位1就运行多少次。
 
 ### 代码
@@ -174,8 +483,6 @@ public int NumberOf(int n) {
     return count;
 }
 ```
-
-
 
 ------
 
@@ -230,8 +537,6 @@ public class Solution {
 }
 ```
 
-
-
 ------
 
 
@@ -244,6 +549,12 @@ public class Solution {
 
 ### 解题思路
 
+简单方法：
+
+1. 首先找到第一个偶数，然后从下一个开始遍历数组。
+2. 找到偶数后的第一个奇数，按照插入排序，从后往前依次覆盖。
+3. 重复以上两步，直至遍历结束。
+
 方法一：利用插入排序的思想。
 
 1. 找到第一个偶数的位置 *p* ，从下一个位置 *p+1* 开始遍历数组。例如 *[1, 2, 3, 4, 5, 6, 7]*，*p = 1* ，从下标 *2* 遍历数组
@@ -255,6 +566,31 @@ public class Solution {
 2. 依次将偶数往后移...
 
 ### 代码
+
+```java
+public void reOrderArray(int [] array) {
+    if (array == null)
+        return;
+    for (int i = 0; i < array.length; i++) {
+        if (array[i] % 2 == 0) {
+            for (int j = i + 1; j < array.length; j++) {
+                if (array[j] % 2 == 0) {
+                    continue;
+                } else {
+                    int temp = array[j];
+                    int index = j;
+                    while (index > i) {
+                        array[index] = array[index - 1];
+                        index--;
+                    }
+                    array[i] = temp;
+                    break;
+                }
+            }
+        }
+    }
+}
+```
 
 ```java
 // 代码一
@@ -282,8 +618,7 @@ public void reOrderArray(int [] array) {
             }
             array[p] = temp;
             p++;
-        }
-        
+        }	    
     }
 }
 ```
@@ -303,9 +638,150 @@ public void reOrderArray(int [] array) {
 }
 ```
 
-
-
 ------
+
+
+
+## 链表中倒数第k个结点
+
+### 题目描述
+
+输入一个链表，输出该链表中倒数第k个结点。
+
+### 解题思路
+
+方法一：
+
+1. 倒数第 k 个结点，就是正数第 n-k+1 个。
+2. 若设置一个快指针先行遍历到链表的最后，那么倒数第 k 个结点与最后一个结点的距离相差 n - (n-k+1) = k - 1
+3. 所以，可以让快指针线性走 k-1 步，此时，设置一个慢指针与快指针同时前进；当快指针走到最后，慢指针刚好走 k-1 步，即倒数第 k 个结点。
+
+### 代码
+
+```java
+public class Solution {
+    public ListNode FindKthToTail(ListNode head, int k) {
+        if (head == null || k <= 0)
+            return null;
+        ListNode slow = head;
+        ListNode fast = head;
+        for (int i = 0; i <k - 1; i++) {
+            if (fast.next != null) {
+                fast = fast.next;
+            } else {
+                return null;
+            }
+        }
+        while (fast.next != null) {
+            fast = fast.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
+}
+```
+
+---
+
+
+
+## 反转链表
+
+### 题目描述
+
+输入一个链表，反转链表后，输出新链表的表头。
+
+### 代码
+
+```java
+public class Solution {
+    public ListNode ReverseList(ListNode head) {
+        if (head == null)
+            return null;
+        ListNode pre = null, next = null;
+        while (head != null) {
+            next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        return pre;
+    }
+}
+```
+
+---
+
+
+
+## 合并两个排序的链表
+
+### 题目描述
+
+输入两个单调递增的链表，输出两个链表合成后的链表，当然我们需要合成后的链表满足单调不减规则。
+
+### 代码
+
+```jaa
+// 非递归
+public ListNode Merge(ListNode list1,ListNode list2) {
+    if (list1 == null && list2 == null)
+        return null;
+    if (list1 == null)
+        return list2;
+    if (list2 == null)
+        return list1;
+
+    ListNode head = null, cur = null;
+    while (list1 != null && list2 != null) {
+        if (list1.val <= list2.val) {
+            if (head == null) {
+                head = cur =  list1;
+            } else {
+                cur.next = list1;
+                cur = cur.next;
+            }
+            list1 = list1.next;
+        } else {
+            if (head == null) {
+                head = cur = list2;
+            } else {
+                cur.next = list2;
+                cur = cur.next;
+            }
+            list2 = list2.next;
+        }
+    }
+
+    if (list1 == null)
+        cur.next = list2;
+    if (list2 == null)
+        cur.next = list1;
+    return head;
+}
+
+//递归
+public ListNode Merge(ListNode list1,ListNode list2) {
+    if (list1 == null && list2 == null)
+        return null;
+    if (list1 == null)
+        return list2;
+    if (list2 == null)
+        return list1;
+
+    ListNode head = null;
+    if (list1.val <= list2.val) {
+        head = list1;
+        head.next = Merge(list1.next, list2);
+    } else {
+        head = list2;
+        head.next = Merge(list1, list2.next);
+    }
+    return head;
+}
+```
+
+---
 
 
 
@@ -323,17 +799,6 @@ public void reOrderArray(int [] array) {
 ### 代码
 
 ```java
-/**
-public class TreeNode {
-    int val = 0;
-    TreeNode left = null;
-    TreeNode right = null;
-
-    public TreeNode(int val) {
-        this.val = val;
-    }
-}
-*/
 
 public class Solution {
 	
@@ -343,7 +808,7 @@ public class Solution {
         if (root1 != null && root2 != null) {
             // 找到A树中与B树根节点相对应的节点
 			if (root1.val == root2.val) {
-				res = Tree1haveTree2(root1, root2);
+				res = Tree1haveTree2(root1, root2);	
 			}
             // 若没有，继续从A树的左右子树中寻找
 			if (!res) {
@@ -456,7 +921,11 @@ public void Mirror(TreeNode root) {
 }
 ```
 
+---
 
+
+
+## 顺时针打印矩阵
 
 ---
 
@@ -489,22 +958,19 @@ public class Solution {
     Stack<Integer> stack2 = new Stack<Integer>();
     
     public void push(int node) {
-        stack1.push(node);
-        if(stack2.empty()){
-            stack2.push(node);
-        }else{
-            int temp = stack2.peek();
-            if(node<=temp){
-                 stack2.push(node);   
-            }else{
-                stack2.push(temp);
-            }
+        s1.push(node);
+        if (s2.empty()) {
+            s2.push(node);
+        } else if (s2.peek() >= node) {
+            s2.push(node);
         }
     }
     
     public void pop() {
-        stack1.pop();
-        stack2.pop();
+        if (s1.peek() == s2.peek()) {
+            s2.pop();
+        }
+        s1.pop();
     }
     
     public int top() {
@@ -543,17 +1009,18 @@ import java.util.Stack;
 
 public class Solution {
     public boolean IsPopOrder(int [] pushA,int [] popA) {
-        if(pushA.length==0 || popA.length==0)    return false;
-        Stack<Integer> stack = new Stack<Integer>();
+        if (pushA == null || popA == null)
+            return false;
         int index = 0;
-        for(int i=0; i<pushA.length; i++){
-            stack.push(pushA[i]);
-            while(!stack.empty() && stack.peek()==popA[index]){
-                stack.pop();
+        Stack<Integer> s = new Stack<Integer>();
+        for (int i = 0; i < pushA.length; i++) {
+            s.push(pushA[i]);
+            while (!s.empty() && s.peek() == popA[index]) {
+                s.pop();
                 index++;
             }
         }
-        return stack.empty();
+        return s.empty();
     }
 }
 ```
@@ -3216,6 +3683,7 @@ public class Solution {
     });
     PriorityQueue<Integer> right = new PriorityQueue<Integer>();
     int count = 0;
+    
     public void Insert(Integer num) {
         if (count % 2 == 0) {
             if (left.isEmpty()) {
