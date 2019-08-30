@@ -139,8 +139,6 @@ public class Solution {
 
 #### 堆排序
 
-
-
 时间复杂度为 $O(nlogn)$ 。
 
 ![](./sort/heap.gif) 
@@ -330,7 +328,11 @@ public class Solution {
 
 ### 归并排序
 
+1. 将长序列从中间分成两个子序列。
+2. 对这两个子序列依次继续执行重复分裂，直至不能再分。
+3. 递归返回两两排好序的子序列。
 
+平均时间复杂度为 $O(nlogn)$ 。
 
 ![](./sort/merge.gif)  
 
