@@ -1,4 +1,4 @@
-# <center>剑指Offer解题思路</center>
+# 	<center>剑指Offer解题思路</center>
 
 - [二维数组中的查找](#二维数组中的查找) 
 - [替换空格](#替换空格) 
@@ -60,6 +60,7 @@
 - [滑动窗口的最大值](#滑动窗口的最大值) 
 - [矩阵中的路径](#矩阵中的路径) 
 - [机器人的运动范围](#机器人的运动范围) 
+- [剪绳子](#剪绳子) 
 
 
 
@@ -954,8 +955,8 @@ public void Mirror(TreeNode root) {
 ```java
 import java.util.Stack;
 public class Solution {
-    Stack<Integer> stack1 = new Stack<Integer>();
-    Stack<Integer> stack2 = new Stack<Integer>();
+    Stack<Integer> s1 = new Stack<Integer>();
+    Stack<Integer> s2 = new Stack<Integer>();
     
     public void push(int node) {
         s1.push(node);
@@ -1042,9 +1043,9 @@ public class Solution {
     	5  7 9 11
 ### 解题思路
 
-1. 这是二叉树的层序遍历呀
-2. 设置一个队列，从根结点开始入队，将其左右结点6和8入队
-3. 按照层次，将6出队，把其左右结点5和7再入队，...
+1. 这是二叉树的层序遍历呀。
+2. 设置一个队列，从根结点开始入队，将其左右结点6和8入队。
+3. 按照层次，将6出队，把其左右结点5和7再入队，...。
 
 ### 代码
 
@@ -1052,17 +1053,7 @@ public class Solution {
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-/**
-public class TreeNode {
-    int val = 0;
-    TreeNode left = null;
-    TreeNode right = null;
 
-    public TreeNode(int val) {
-        this.val = val;
-    }
-}
-*/
 public class Solution {
     public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
         ArrayList<Integer> list = new ArrayList<>();
@@ -1119,9 +1110,6 @@ public class Solution {
 	public boolean VerifySquenceOfBST(int [] sequence) {
         if (sequence.length == 0) {
 			return false;
-		}
-        if (sequence.length == 1) {
-			return true;
 		}
         return midSearch(sequence, 0, sequence.length-1);
     }
@@ -1236,15 +1224,15 @@ public class Solution {
 
 1. 在旧链表中的每个元素后面复制该元素。
 
-   ![](./pics/split/split1.jpg)
+   ![](./pics/split1.png)
 
 2. 给每个复制的元素添加 *random* 指针。
 
-   ![](./pics/split/split2.jpg)
+   ![](./pics/split2.png)
 
 3. 把新旧链表分开。
 
-   ![](./pics/split/split3.jpg)
+   ![](./pics/split3.png) 
 
 ### 代码
 
@@ -1740,7 +1728,7 @@ public class Solution {
 
 ## 把数组排成最小的数
 
-## 题目描述
+### 题目描述
 
 输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。例如输入数组{3，32，321}，则打印出这三个数字能排成的最小数字为321323。
 
@@ -3534,6 +3522,7 @@ public class Solution {
 ### 代码:
 
 ```java
+// 递归
 public class Solution {
     int index = -1;
     String Serialize(TreeNode root) {
@@ -3561,6 +3550,50 @@ public class Solution {
             root.right = Deserialize(str);
         }
         return root;
+    }
+}
+
+// 非递归
+import java.util.Queue;
+import java.util.LinkedList;
+public class Solution {
+    String Serialize(TreeNode root) {
+        StringBuffer sb = new StringBuffer();
+        Queue<TreeNode> queue = new LinkedList<TreeNode>();
+        if(root != null)
+            queue.add(root);
+        while(!queue.isEmpty()){
+            TreeNode node = queue.poll();
+            if(node != null){
+                queue.add(node.left);
+                queue.add(node.right);
+                sb.append(node.val + ",");
+            }else{
+                sb.append("#,");
+            }
+        }
+        if(sb.length() != 0)
+            sb.deleteCharAt(sb.length()-1);
+        return sb.toString();
+    }
+    
+    TreeNode Deserialize(String str) {
+        TreeNode head = null;
+        if(str == null || str.length() == 0)
+            return head;
+        String[] s = str.split(",");
+        TreeNode[] nodes = new TreeNode[s.length];
+        for(int i=0; i<s.length; i++){
+            if(!s[i].equals("#"))
+                nodes[i] = new TreeNode(Integer.valueOf(s[i]));
+        }
+        for(int i=0, j=1; j<nodes.length; i++){
+            if(nodes[i] != null){
+                nodes[i].left = nodes[j++];
+                nodes[i].right = nodes[j++];
+            }
+        }
+        return nodes[0];
     }
 }
 ```
@@ -3825,7 +3858,7 @@ public class Solution {
     }
     
     public boolean isPath(char[] matrix, int rows, int cols, int i, int j, char[] str, int k, boolean[] flag) {
-        int index = i * cols + j;
+        int index = i * cols + j;		
         if (i < 0 || j < 0 || i >= rows || j >= cols || matrix[index] != str[k] || flag[index] == true)
             return false;
         // 若最匹配到给定字符串的最后一位
@@ -3850,16 +3883,16 @@ public class Solution {
 
 ## 机器人的运动范围
 
-### 题目描述:
+### 题目描述
 
 地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？
 
-### 解题思路:
+### 解题思路
 
 1. 和上题类似，机器人从第一个满足条件的坐标按顺序遍历上、下、左、右四个坐标，若有坐标满足条件，从当前坐标继续遍历其上、下、左、右四个坐标......比如坐标 $(a, b)$ 的下坐标 $(a - 1, b)$ 满足条件，那么接着坐标 $(a - 1, b)$ 继续探索这个坐标的上、下、左、右四个坐标...
 2. 若坐标 $(a, b)$ 满足条件，其下坐标 $(a - 1, b)$ 也满足条件，但是坐标 $(a - 1, b)$ 的上、下、左、右四个坐标都不满足条件，接下来坐标 $(a - 1, b)$ 的递归函数返回 $1$ ，该坐标的搜索结束，回溯到坐标 $(a, b)$ ，从左坐标继续递归。
 
-###  代码:
+###  代码
 
 ```java
 public class Solution {
@@ -3888,6 +3921,38 @@ public class Solution {
         return sum;
     }
     
+}
+```
+
+---
+
+
+
+## 剪绳子
+
+### 题目描述
+
+给你一根长度为n的绳子，请把绳子剪成m段（m、n都是整数，n>1并且m>1），每段绳子的长度记为k[0],k[1],...,k[m]。请问k[0]xk[1]x...xk[m]可能的最大乘积是多少？例如，当绳子的长度是8时，我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+
+### 代码
+
+```java
+public class Solution {
+    public int cutRope(int target) {
+        if (target == 2)
+            return 1;
+        if (target == 3)
+            return 2;
+        int x = target % 3;
+        int y = target /3;
+        if (x == 0) {
+            return (int)Math.pow(3, y - 1);
+        } else if (x ==1) {
+            return 2 * 2 * (int)Math.pow(3, y - 1);
+        } else {
+            return 2 * (int)Math.pow(3, y);
+        }
+    }
 }
 ```
 
