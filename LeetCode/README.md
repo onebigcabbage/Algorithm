@@ -8,11 +8,17 @@
 
 ##### [53. Maximum Subarray / 最大子序和](./Dynamic Programming/Maximum Subarray.md)
 
-##### [70. Climbing Stairs / 爬楼梯](./Dynamic Programming/Climbing Stairs.md) 
+##### [70. Climbing Stairs / 爬楼梯](./Dynamic Programming/Climbing Stairs.md)
 
 ##### [300. Longest Increasing Subsequence / 最长上升子序列](./Dynamic Programming/Longest Increasing Subsequence.md)
 
-##### [516. Longest Palindromic Subsequence / 最长回文子序列](./Dynamic Programming/Longest Palindromic Subsequence.md) 
+##### [516. Longest Palindromic Subsequence / 最长回文子序列](./Dynamic Programming/Longest Palindromic Subsequence.md)
+
+
+
+### Binary Search
+
+##### [69. Sqrt(x) / x 的平方根]() 
 
 
 

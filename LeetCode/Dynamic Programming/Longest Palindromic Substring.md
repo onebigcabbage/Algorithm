@@ -88,18 +88,21 @@ private static String longestPalindrome(String string) {
     
     String strDivide = divideStr(string, '#');
     len = strDivide.length();
+    // 可扩散半径 + 1
     int[] p = new int[len];
     Arrays.fill(p, 1);
     int longest = 1;
     String str = string.substring(0, 1);
+    // 最长回文子串的中间位置
     int middle = 0;
+    // 最长回文子串的距离
     int maxRange = 0;
     for (int i = 0; i < len; i++) {
+        // 根据对称性直接赋值
         if (i < maxRange) {
             p[i] = Math.min(p[2 * middle - i], maxRange - i);
         }
-
-        // 正常匹配
+        // 从对称点获得p值，继续正常匹配
         while (i - p[i] >= 0 && i + p[i] < len && strDivide.charAt(i - p[i]) == strDivide.charAt(i + p[i])) {
             p[i]++;
         }
