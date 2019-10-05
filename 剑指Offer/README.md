@@ -32,6 +32,7 @@
 - [丑数](#丑数) 
 - [第一个只出现一次的字符](#第一个只出现一次的字符) 
 - [数组中的逆序对](#数组中的逆序对) 
+- [数组中的逆序对](#数组中的逆序对) 
 - [两个链表的第一个公共结点](#两个链表的第一个公共结点) 
 - [数字在排序数组中出现的次数](#数字在排序数组中出现的次数) 
 - [二叉树的深度](#二叉树的深度) 
@@ -1008,21 +1009,19 @@ public class Solution {
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class Solution {
-    public boolean IsPopOrder(int [] pushA,int [] popA) {
-        if (pushA == null || popA == null)
-            return false;
-        int index = 0;
-        Stack<Integer> s = new Stack<Integer>();
-        for (int i = 0; i < pushA.length; i++) {
-            s.push(pushA[i]);
-            while (!s.empty() && s.peek() == popA[index]) {
-                s.pop();
-                index++;
-            }
+public boolean IsPopOrder(int [] pushA,int [] popA) {
+    if (pushA == null || popA == null)
+        return false;
+    int index = 0;
+    Stack<Integer> s = new Stack<Integer>();
+    for (int i = 0; i < pushA.length; i++) {
+        s.push(pushA[i]);
+        while (!s.empty() && s.peek() == popA[index]) {
+            s.pop();
+            index++;
         }
-        return s.empty();
     }
+    return s.empty();
 }
 ```
 
@@ -1054,26 +1053,24 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Solution {
-    public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
-        ArrayList<Integer> list = new ArrayList<>();
-        if (root == null) {
-			return list;
-		}
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.add(root);
-        while(!queue.isEmpty()) {
-        	TreeNode node = queue.poll();
-        	list.add(node.val);
-        	if (node.left != null) {
-        		queue.add(node.left);
-        	}
-        	if (node.right != null) {
-				queue.add(node.right);
-			}
-        }
+public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+    ArrayList<Integer> list = new ArrayList<>();
+    if (root == null) {
         return list;
     }
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.add(root);
+    while(!queue.isEmpty()) {
+        TreeNode node = queue.poll();
+        list.add(node.val);
+        if (node.left != null) {
+            queue.add(node.left);
+        }
+        if (node.right != null) {
+            queue.add(node.right);
+        }
+    }
+    return list;
 }
 ```
 
@@ -1105,31 +1102,27 @@ public class Solution {
 ### 代码
 
 ```java
-public class Solution {
-	
-	public boolean VerifySquenceOfBST(int [] sequence) {
-        if (sequence.length == 0) {
-			return false;
-		}
-        return midSearch(sequence, 0, sequence.length-1);
+public boolean VerifySquenceOfBST(int [] sequence) {
+    if (sequence.length == 0) {
+        return false;
     }
+    return midSearch(sequence, 0, sequence.length-1);
+}
 
-	public boolean midSearch(int[] sequence, int left, int right) {
-		if (left >= right) {
-			return true;
-		}
-		int i = left;
-		while (sequence[i] < sequence[right]) {
-			i++;
-		}
-		for (int j = i; j < right; j++) {
-			if (sequence[j] < sequence[right]) {
-				return false;
-			}
-		}
-		return midSearch(sequence, left, i - 1) && midSearch(sequence, i + 1, right - 1);
-	}
-
+public boolean midSearch(int[] sequence, int left, int right) {
+    if (left >= right) {
+        return true;
+    }
+    int i = left;
+    while (sequence[i] < sequence[right]) {
+        i++;
+    }
+    for (int j = i; j < right; j++) {
+        if (sequence[j] < sequence[right]) {
+            return false;
+        }
+    }
+    return midSearch(sequence, left, i - 1) && midSearch(sequence, i + 1, right - 1);
 }
 ```
 
@@ -1238,52 +1231,48 @@ public class Solution {
 
 ```java
 // 思路二
-public class Solution {
-    
-    public RandomListNode Clone(RandomListNode pHead) {
-        // 为空链，返回null
-        if (pHead == null) {
-    		return null;
-    	}
-        // 创建当前链表第一个节点的引用
-    	RandomListNode newNode = pHead;
-        // 复制next，A->B->C => A->A'->B->B'->C->C'
-    	while (newNode != null) {
-    		RandomListNode node = new RandomListNode(newNode.label);
-    		node.next = newNode.next;
-    		newNode.next = node;
-    		newNode = node.next;
-    	}
-        // 重新变为第一个节点的引用
-    	newNode = pHead;
-        // 复制链表random指针
-    	while (newNode != null) {
-            // 有的节点random指针为空
-    		if (newNode.random != null) {
-                // 若A指向C，则A‘必然指向C后面的C’
-    			newNode.next.random = newNode.random.next;
-    		}
-            // 往后跳一个，比如A后面是它的复制值A‘，再后面一个才是B
-    		newNode = newNode.next.next;
-    	}
-        // 重新变为第一个节点的引用
-    	newNode = pHead;
-        // head是要返回的新的链表的头节点
-    	RandomListNode Head = newNode.next;
-        // 新的链表的头节点的引用
-    	RandomListNode tempNode = Head;
-        // 因为已经排除了是空链表，所以先将旧链表的头结点指向旧链表的第二个节点
-    	newNode.next = tempNode.next;
-    	newNode = newNode.next;
-        // 拆开链表
-    	while (newNode != null) {
-    		tempNode.next = newNode.next;
-    		tempNode = tempNode.next;
-    		newNode.next = tempNode.next;
-    		newNode = newNode.next;
-    	}
-    	return Head;
+public RandomListNode Clone(RandomListNode pHead) {
+    // 为空链，返回null
+    if (pHead == null) {
+        return null;
     }
+    // 创建当前链表第一个节点的引用
+    RandomListNode node = pHead;
+    // 复制next，A->B->C => A->A'->B->B'->C->C'
+    while (node != null) {
+        RandomListNode temp = new RandomListNode(node.label);
+        temp.next = node.next;
+        node.next = temp;
+        node = temp.next;
+    }
+    // 重新变为第一个节点的引用
+    node = pHead;
+    // 复制链表random指针
+    while (node != null) {
+        // 有的节点random指针为空
+        if (node.random != null) {
+            // 若A指向C，则A‘必然指向C后面的C’
+            node.next.random = node.random.next;
+        }
+        // 往后跳一个，比如A后面是它的复制值A‘，再后面一个才是B
+        node = node.next.next;
+    }
+    // 重新变为新链表的头结点，即最终要返回的
+    node = pHead.next;
+    // 旧链表、新链表头节点的引用
+    RandomListNode oldnode = pHead, newnode = node;
+    // 因为已经排除了是空链表，所以先将旧链表的头结点指向旧链表的第二个节点
+    oldnode.next = newnode.next;
+    // 重新定位旧链表结点, 这样旧链表结点始终在最后的位置。若不为空，则后面肯定有一个新链表的结点
+    oldnode = oldnode.next;
+	// 拆开链表
+    while (oldnode != null) {
+        newnode.next = oldnode.next;
+        newnode = newnode.next;
+        oldnode.next = newnode.next;
+        oldnode = oldnode.next;
+    }
+    return node;
 }
 ```
 
@@ -1619,13 +1608,11 @@ public static void creatHeap(int[] arr, int n) {
         percolateDown(arr, i, n);
     }
 }
-
 // 删除栈顶元素并调整
 private static void deleteHeap(int[] arr, int data, int n) {
     arr[0] = data;
     percolateDown(arr, 0, n);
 }
-
 // 下滤
 private static void percolateDown(int[] arr, int i, int n) {
     // 第一个叶子结点的父结点
@@ -1648,7 +1635,6 @@ private static void percolateDown(int[] arr, int i, int n) {
         child = i * 2 + 1;
     }
 }
-
 public static ArrayList<Integer> GetLeastNumbers_Solution(int[] input, int k) {
     ArrayList<Integer> list = new ArrayList<Integer>();
     if (input == null || input.length < k) {
@@ -1663,6 +1649,23 @@ public static ArrayList<Integer> GetLeastNumbers_Solution(int[] input, int k) {
     }
     for (int i = 0; i < k; i++) {
         list.add(input[i]);
+    }
+    return list;
+}
+
+// 或者
+// 使用优先级队列 PriorityQueue 代替手工建堆
+public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+    ArrayList<Integer> list = new ArrayList<Integer>();
+    if (input.length == 0 || k <= 0 || k > input.length) {
+        return list;
+    }
+    PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
+    for (int i = 0; i < input.length; i++) {
+        queue.offer(input[i]);
+    }
+    for (int i = 0; i < k; i++) {
+        list.add(queue.poll());
     }
     return list;
 }
@@ -1696,29 +1699,25 @@ HZ偶尔会拿些专业问题来忽悠那些非计算机专业的同学。今天
 
 ```java
 // 代码一
-public class Solution {
-    public int FindGreatestSumOfSubArray(int[] array) {
-        int maxsum = array[0], thissum = array[0];
-		for (int i = 1; i < array.length; i++) {
-			thissum = thissum < 0 ? array[i] : thissum + array[i];
-			maxsum = thissum > maxsum ? thissum : maxsum;
-		}
-		return maxsum;
+public int FindGreatestSumOfSubArray(int[] array) {
+    int maxsum = array[0], thissum = array[0];
+    for (int i = 1; i < array.length; i++) {
+        thissum = thissum < 0 ? array[i] : thissum + array[i];
+        maxsum = thissum > maxsum ? thissum : maxsum;
     }
+    return maxsum;
 }
 ```
 
 ```java
 // 代码二
-public class Solution {
-    public int FindGreatestSumOfSubArray(int[] array) {
-        int maxsum = array[0], thissum = array[0];
-		for (int i = 1; i < array.length; i++) {
-			thissum = Math.max(array[i], thissum + array[i]);
-			maxsum = Math.max(maxsum, thissum);
-		}
-		return maxsum;
+public int FindGreatestSumOfSubArray(int[] array) {
+    int maxsum = array[0], thissum = array[0];
+    for (int i = 1; i < array.length; i++) {
+        thissum = Math.max(array[i], thissum + array[i]);
+        maxsum = Math.max(maxsum, thissum);
     }
+    return maxsum;
 }
 ```
 
@@ -1927,7 +1926,15 @@ public class Solution {
 
 方法二：
 
-1. 
+1. 利用归并排序的方法，把数组分解位两个数组，每次只考虑这两个数组的情况，同时在辅助数组中按照大小排序，通过递归的方法处理，最后肯定是先从一位一位排好序的。
+
+   ![](./pics/InversePairs.png) 
+
+2. 两两数组排序到辅助数组中时，设置两个指针同时指向两个数组的最后一位，如图a所示，此时两个数组都是从大到小排好序的。
+
+   ![](./pics/InversePairs1.png) 
+
+3. 若 p1 指向元素大于 p2 指向元素，说明 p1 与 第二个数组中的所有元素皆可组成逆序对，同时将 p1 元素放置辅助数组中，往前移动 p1；否则的话将 p2 往前移，继续比较。
 
 ### 代码
 
@@ -1943,6 +1950,57 @@ private static int InversePairs(int[] array) {
         }
     }
     return P % 1000000007;
+}
+
+// 方法二
+public int InversePairs(int [] array) {
+    if (array.length == 0) {
+        return 0;
+    }
+    // 辅助数组
+    int[] copy = new int[array.length];
+    for (int i = 0; i < array.length; i++) {
+        copy[i] = array[i];
+    }
+    int count = getInversePairs(array, copy, 0, array.length - 1);
+    return count;
+}
+
+public int getInversePairs(int[] array, int[] copy, int left, int right) {
+    // 中止条件:当分成单个元素的时候
+    if (left == right) {
+        return 0;
+    }
+    int mid = (left + right) / 2;
+    int lcount = getInversePairs(array, copy, left, mid);
+    int rcount = getInversePairs(array, copy, mid + 1, right);
+    int count = 0;
+    int i = mid, j = right;
+    int index = right;
+    while (i >= left && j > mid) {
+        if (array[i] > array[j]) {
+            count += j - mid;
+            copy[index--] = array[i--];
+            if (count > 1000000007) {
+                count %= 1000000007;
+            }
+        } else {
+            copy[index--] = array[j--];
+        }
+    }
+    // 第二个数组遍历完，直接将第一个数组放入辅助数组
+    for (; i >= left; i--) {
+        copy[index--] = array[i];
+    }
+    // 第一个遍历完
+    for (; j > mid; j--) {
+        copy[index--] = array[j];
+    }
+    // 同步原数组的顺序
+    for (int k = left; k <= right; k++) {
+        array[k] = copy[k];
+    }
+    return (count + lcount + rcount) % 1000000007;
 }
 ```
 
