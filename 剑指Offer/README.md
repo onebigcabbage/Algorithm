@@ -32,7 +32,6 @@
 - [丑数](#丑数) 
 - [第一个只出现一次的字符](#第一个只出现一次的字符) 
 - [数组中的逆序对](#数组中的逆序对) 
-- [数组中的逆序对](#数组中的逆序对) 
 - [两个链表的第一个公共结点](#两个链表的第一个公共结点) 
 - [数字在排序数组中出现的次数](#数字在排序数组中出现的次数) 
 - [二叉树的深度](#二叉树的深度) 
@@ -53,6 +52,7 @@
 - [链表中环的入口结点](#链表中环的入口结点) 
 - [删除链表中重复的结点](#删除链表中重复的结点) 
 - [二叉树的下一个结点](#二叉树的下一个结点) 
+- [对称的二叉树](#对称的二叉树) 
 - [按之字形顺序打印二叉树](#按之字形顺序打印二叉树) 
 - [把二叉树打印成多行](#把二叉树打印成多行) 
 - [序列化二叉树](#序列化二叉树) 
@@ -2085,97 +2085,122 @@ public class Solution {
 ### 代码
 
 ```java
-public class Solution {
-    public int GetNumberOfK(int [] array , int k) {
-       if (array.length == 0) {
-			return 0;
-		}
-		int first = getFirstK(array, k, 0, array.length - 1);
-		int last = getLastK(array, k, 0, array.length - 1);
-		if (first != -1 && last != -1) {
-			return last - first + 1;
-		}
-		return 0;
-    }
-    
-    /**
-	 * 递归二分查找
-	 * 寻找 k 第一个出现的索引
-	 */
-	public int getFirstK(int[] array, int k, int i, int j) {
-		if (i > j) {
-			return -1;
-		}
-		int middle = (i + j) / 2;
-		// 中间数字刚好等于 k，但是不确定是第一个出现的 k
-		if (array[middle] == k) {
-			// 若前面数字不等于 k，说明此中间数字是第一个出现的 k
-			if (middle == 0 || (middle > 0 && array[middle - 1] != k)) {
-				return middle;
-				// 前面数字等于 k,查找数组前半段
-			} else {
-				j = middle - 1;
-			}
-			// 查找数组后半段
-		} else if (array[middle] > k) {
-			j = middle - 1;
-			// 查找数组前半段
-		} else {
-			i = middle + 1;
-		}
-		return getFirstK(array, k, i, j);
-	}
-	
-	/**
-	 *
-	 * 寻找 k 最后一个出现的索引
-	 */
-	public int getLastK(int[] array, int k, int i, int j) {
-		if (i > j) {
-			return -1;
-		}
-		int middle = (i + j) / 2;
-		if (array[middle] == k) {
-			if (middle == array.length - 1 || (middle < array.length - 1 && array[middle + 1] != k)) {
-				return middle;
-			} else {
-				i = middle + 1;
-			}
-		} else if (array[middle] > k) {
-			j = middle - 1;
-		} else {
-			i = middle + 1;
-		}
-		return getLastK(array, k, i, j);
-	}
-    
-    /**
-	 * 非递归二分查找
-	 * 寻找 k 最后一个出现的索引
-	 */
-	public int getLastK(int[] array, int k, int i, int j) {
-		if (i > j) {
-			return -1;
-		}
-		int middle = (i + j) / 2;
-        while (i <= j) {
-            if (array[middle] == k) {
-                if (middle == array.length - 1 || (middle < array.length - 1 && array[middle + 1] != k)) {
-                    return middle;
-                } else {
-                    i = middle + 1;
-                }
-            } else if (array[middle] > k) {
-                j = middle - 1;
-            } else {
-                i = middle + 1;
-            }
-            middle = (i + j) / 2;
-        }
-        return -1;
-	}
-    
+// 非递归查找
 
+public int GetNumberOfK(int [] array , int k) {
+    if (array.length == 0) {
+        return 0;
+    }
+    int firstK = getFirstK(array, k);
+    int lastK = getLastK(array, k);
+    if (firstK != -1 && lastK != -1) {
+        return lastK - firstK + 1;
+    }
+    return 0;
+}
+
+public int getFirstK(int[] array, int tar) {
+    int left = 0, right = array.length;
+    while (left < right) {
+        int mid = (left + right) / 2;
+        if (array[mid] == tar) {
+            if (mid == 0 || (mid > 0 && array[mid - 1] != tar)) {
+                return mid;
+            } else {
+                right = mid;
+            }
+        } else if (array[mid] > tar) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return -1;
+}
+
+public int getLastK(int[] array, int tar) {
+    // 注意right为长度,不是长度-1,否则while循环里left+1时可能等于right返回-1
+    int left = 0, right = array.length;
+    while (left < right) {
+        int mid = (left + right) / 2;
+        if (array[mid] == tar) {
+            if (mid == right - 1 || (mid < right && array[mid + 1] != tar)) {
+                return mid;
+            } else {
+                left = mid + 1;
+            }
+        } else if (array[mid] > tar) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    return -1;
+}
+```
+
+```java
+// 递归查找
+
+public int GetNumberOfK(int [] array , int k) {
+   if (array.length == 0) {
+        return 0;
+    }
+    int first = getFirstK(array, k, 0, array.length - 1);
+    int last = getLastK(array, k, 0, array.length - 1);
+    if (first != -1 && last != -1) {
+        return last - first + 1;
+    }
+    return 0;
+}
+/**
+ * 递归二分查找
+ * 寻找 k 第一个出现的索引
+ */
+public int getFirstK(int[] array, int k, int i, int j) {
+    if (i > j) {
+        return -1;
+    }
+    int middle = (i + j) / 2;
+    // 中间数字刚好等于 k，但是不确定是第一个出现的 k
+    if (array[middle] == k) {
+        // 若前面数字不等于 k，说明此中间数字是第一个出现的 k
+        if (middle == 0 || (middle > 0 && array[middle - 1] != k)) {
+            return middle;
+            // 前面数字等于 k,查找数组前半段
+        } else {
+            j = middle - 1;
+        }
+        // 查找数组后半段
+    } else if (array[middle] > k) {
+        j = middle - 1;
+        // 查找数组前半段
+    } else {
+        i = middle + 1;
+    }
+    return getFirstK(array, k, i, j);
+}
+
+/**
+ * 寻找 k 最后一个出现的索引
+ */
+public int getLastK(int[] array, int k, int i, int j) {
+    if (i > j) {
+        return -1;
+    }
+    int middle = (i + j) / 2;
+    if (array[middle] == k) {
+        if (middle == array.length - 1 || (middle < array.length - 1 && array[middle + 1] != k)) {
+            return middle;
+        } else {
+            i = middle + 1;
+        }
+    } else if (array[middle] > k) {
+        j = middle - 1;
+    } else {
+        i = middle + 1;
+    }
+    return getLastK(array, k, i, j);
 }
 ```
 
@@ -2208,14 +2233,12 @@ public class Solution {
 
 ```java
 // 方法一：递归
-public class Solution {
-    public int TreeDepth(TreeNode root) {
-        if (root == null)
-    		return 0;
-        int nleft = TreeDepth(root.left);
-        int nright = TreeDepth(root.right);
-        return nleft > nright ? nleft + 1 : nright + 1;
-    }
+public int TreeDepth(TreeNode root) {
+    if (root == null)
+        return 0;
+    int nleft = TreeDepth(root.left);
+    int nright = TreeDepth(root.right);
+    return nleft > nright ? nleft + 1 : nright + 1;
 }
 ```
 
@@ -2223,28 +2246,27 @@ public class Solution {
 // 方法二：非递归
 import java.util.Queue;
 import java.util.LinkedList;
-public class Solution {
-    public int TreeDepth(TreeNode root) {
-        if (root == null)
-    		return 0;
-        int depth = 0;
-        Queue<TreeNode> queue = new LinkedList<TreeNode>();
-        queue.add(root);
-        while(queue != null) {
-        	depth++;
-            // 循环每一层的结点
-        	for (int i = 0; i < queue.size(); i++) {
-        		TreeNode node = queue.poll();
-        		if (node.left != null) {
-        			queue.add(node.left);
-        		}
-        		if (node.right != null) {
-        			queue.add(node.right);
-        		}
-			}
+
+public int TreeDepth(TreeNode root) {
+    if (root == null)
+        return 0;
+    int depth = 0;
+    Queue<TreeNode> queue = new LinkedList<TreeNode>();
+    queue.add(root);
+    while(queue != null) {
+        depth++;
+        // 循环每一层的结点
+        for (int i = 0; i < queue.size(); i++) {
+            TreeNode node = queue.poll();
+            if (node.left != null) {
+                queue.add(node.left);
+            }
+            if (node.right != null) {
+                queue.add(node.right);
+            }
         }
-    	return depth;
     }
+    return depth;
 }
 ```
 
@@ -2262,40 +2284,37 @@ public class Solution {
 
 方法一：
 
-1. 从根节点开始计算每个结点左右子树的深度，若深度之差不超过 1 ，则是一颗平衡二叉树
-2. 缺点：在判断每个结点的时候，会多次计算其左右结点的深度，导致重复计算
+1. 从根节点开始计算每个结点左右子树的深度，若深度之差不超过 1 ，则是一颗平衡二叉树。
+2. 缺点：在判断每个结点的时候，会多次计算其左右结点的深度，导致重复计算。
 
 方法二：
 
-1. 既然知道方法一会大量重复的计算，可以按照后续遍历的方式，在遍历到一个结点的时候，已经遍历过其左右结点
-2. 递归过程图可参考上题
+1. 既然知道方法一会大量重复的计算，可以按照后续遍历的方式，在遍历到一个结点的时候，已经遍历过其左右结点。
+2. 递归过程图可参考上题。
 
 ### 代码
 
 ```java
 // 方法一
-public class Solution {
-    public boolean IsBalanced_Solution(TreeNode root) {
-        if (root == null) {
-			return true;
-		}
-		int left = treeDepth(root.left);
-		int right = treeDepth(root.right);
-		int diff = left - right;
-		if (diff > 1 || diff < -1) {
-			return false;
-		}
-		return IsBalanced_Solution(root.left) && IsBalanced_Solution(root.right);
+public boolean IsBalanced_Solution(TreeNode root) {
+    if (root == null) {
+        return true;
     }
-    private int treeDepth(TreeNode node) {
-		if (node == null)
-			return 0;
-		int left = treeDepth(node.left);
-		int right = treeDepth(node.right);
-		
-		return left > right ? left + 1 : right + 1;
-	}
+    int left = treeDepth(root.left);
+    int right = treeDepth(root.right);
+    int diff = left - right;
+    if (diff > 1 || diff < -1) {
+        return false;
+    }
+    return IsBalanced_Solution(root.left) && IsBalanced_Solution(root.right);
+}
+private int treeDepth(TreeNode node) {
+    if (node == null)
+        return 0;
+    int left = treeDepth(node.left);
+    int right = treeDepth(node.right);
 
+    return left > right ? left + 1 : right + 1;
 }
 ```
 
@@ -2303,29 +2322,23 @@ public class Solution {
 
 ```java
 // 方法二
-public class Solution {
-    boolean flag = true;
-	
-	public boolean IsBalanced_Solution(TreeNode root) {
-		if (root == null) {
-			return true;
-		}
-		isBalanced(root);
-		return flag;
-    }
-
-	private int isBalanced(TreeNode node) {
-		if (node == null)
-			return 0;
-		int left = isBalanced(node.left);
-		int right = isBalanced(node.right);
-		int diff = left - right;
-		if (diff > 1 || diff < -1) {
-			flag = false;
-            return;
-		}
-		return left > right ? left + 1 : right + 1;
-	}
+public boolean IsBalanced_Solution(TreeNode root) {
+    if (root == null)
+        return true;
+    return isBalanced(root) != -1;
+}
+public int isBalanced(TreeNode root) {
+    if (root == null)
+        return 0;
+    int llen = isBalanced(root.left);
+    // 若左子树不平衡直接返回，不用继续计算右子树
+    if (llen == -1)
+        return -1;
+    int rlen = isBalanced(root.right);
+    if (rlen == -1)
+        return -1;
+    // 若节点不平衡返回-1,否则返回深度
+    return Math.abs(llen - rlen) > 1 ? -1 : 1 + Math.max(llen, rlen);
 }
 ```
 
@@ -2341,6 +2354,12 @@ public class Solution {
 
 ### 解题思路
 
+方法一：
+
+使用HashMap。
+
+方法二：
+
 1. 两个相同的数进行异或运算结果为0，一个数和 0 进行异或的结果是它本身，所以整个数组进行异或，最后的结果肯定是那 **两个只出现一次的数字的异或结果** ，比如数组 { 2, 4, 3, 6, 3, 2, 5, 5 } 中所有数的异或结果为 (0 0 1 0)，等于 {4, 6} 的异或结果
 2. 两个不同数字的异或结果中肯定包含至少 1 ，这些 1 就是两个数中不同的位，取最左边的 1 ，假设是第 2 位，将数组里面的数根据第 2 位是否包含 1 划分为两部分，目的是将两个不同的数分开，那么相同的数肯定在一块，因为相同数所有的位都相同。比如上面的数组会分为 { 2, 3, 6, 3, 2} 和 { 4, 5, 5 }
 3. 将两部分分别异或，相同的数就会抵消为 0，只剩下不同的数
@@ -2348,44 +2367,62 @@ public class Solution {
 ### 代码
 
 ```java
+import java.util.HashMap;
+
+public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
+    if (array.length == 0) {
+        return;
+    }
+    HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+    for (int i = 0; i < array.length; i++) {
+        if (!map.containsKey(array[i])) {
+            map.put(array[i], 1);
+        } else {
+            map.put(array[i], map.get(array[i]) + 1);
+        }
+    }
+    int[] num = new int[2];
+    int index = 0;
+    for (int i = 0; i < array.length; i++) {
+        if (map.get(array[i]) == 1) {
+            num[index++] = array[i];
+        }
+    }
+    num1[0] = num[0];
+    num2[0] = num[1];
+}
+```
+
+```java
 //num1,num2分别为长度为1的数组。传出参数
 //将num1[0],num2[0]设置为返回结果
-public class Solution {
-    public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
-        if (array == null || array.length <2)
-			return;
-		int length = array.length;
-		int flag = 0;
-		for (int i = 0; i < length; i++) {
-			flag ^= array[i];
-		}
-		
-		int index = findIndex(flag);
-		
-		num1[0] = 0;
-		num2[0] = 0;
-		for (int i = 0; i < length; i++) {
-			if (isBit1(array[i], index)) {
-				num1[0] ^= array[i];
-			} else {
-				num2[0] ^= array[i];
-			}
-		}
+
+public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
+    if (array == null || array.length <2)
+        return;
+    int length = array.length;
+    int flag = 0;
+    for (int i = 0; i < length; i++) {
+        flag ^= array[i];
     }
-    
-    private boolean isBit1(int i, int index) {
-		return ((i >> index) & 1) == 1;
-	}
-
-
-	private int findIndex(int flag) {
-		int index = 0;
-		while ((flag & 1) == 0) {
-			flag >>= 1;
-			index++;
-		}
-		return index;
-	}
+    int index = findIndex(flag);
+    num1[0] = 0;
+    num2[0] = 0;
+    for (int i = 0; i < length; i++) {
+        if (((array[i] >> index) & 1) == 1) {
+            num1[0] ^= array[i];
+        } else {
+            num2[0] ^= array[i];
+        }
+    }
+}
+private int findIndex(int flag) {
+    int index = 0;
+    while ((flag & 1) == 0) {
+        flag >>= 1;
+        index++;
+    }
+    return index;
 }
 ```
 
@@ -2407,27 +2444,26 @@ public class Solution {
 
 ```java
 import java.util.ArrayList;
-public class Solution {
-    public ArrayList<ArrayList<Integer> > FindContinuousSequence(int sum) {
-       ArrayList<ArrayList<Integer>> allList = new ArrayList<ArrayList<Integer>>();
-		int left = 1, right = 2;
-		while (left < right) {
-			int cursum = (left + right) * (right - left + 1) / 2;
-			if (cursum == sum) {
-				ArrayList<Integer> list = new ArrayList<Integer>();
-				for (int i = left; i <= right; i++) {
-					list.add(i);
-				}
-				allList.add(list);
-				left++;
-			} else if (cursum < sum) {
-				right++;
-			} else {
-				left++;
-			}
-		}
-		return allList;
+
+public ArrayList<ArrayList<Integer> > FindContinuousSequence(int sum) {
+   ArrayList<ArrayList<Integer>> allList = new ArrayList<ArrayList<Integer>>();
+    int left = 1, right = 2;
+    while (left < right) {
+        int cursum = (left + right) * (right - left + 1) / 2;
+        if (cursum == sum) {
+            ArrayList<Integer> list = new ArrayList<Integer>();
+            for (int i = left; i <= right; i++) {
+                list.add(i);
+            }
+            allList.add(list);
+            left++;
+        } else if (cursum < sum) {
+            right++;
+        } else {
+            left++;
+        }
     }
+    return allList;
 }
 ```
 
@@ -2450,29 +2486,26 @@ public class Solution {
 
 ```java
 import java.util.ArrayList;
-public class Solution {
-    public ArrayList<Integer> FindNumbersWithSum(int [] array,int sum) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        if (array.length < 2 || array == null)
-        	return list;
-        int start = 0, end = array.length - 1;
-        while (start < end) {
-        	if (array[start] + array[end] == sum) {
-        		list.add(array[start]);
-        		list.add(array[end]);
-        		return list;
-        	}else if (array[start] + array[end] > sum){
-				end--;
-			} else {
-				start++;
-			}
-        }
+
+public ArrayList<Integer> FindNumbersWithSum(int [] array,int sum) {
+    ArrayList<Integer> list = new ArrayList<Integer>();
+    if (array.length < 2 || array == null)
         return list;
+    int start = 0, end = array.length - 1;
+    while (start < end) {
+        if (array[start] + array[end] == sum) {
+            list.add(array[start]);
+            list.add(array[end]);
+            return list;
+        }else if (array[start] + array[end] > sum){
+            end--;
+        } else {
+            start++;
+        }
     }
+    return list;
 }
 ```
-
-
 
 ---
 
@@ -2556,7 +2589,7 @@ public class Solution {
     		reverse(ans, 0, n - 1);
     		reverse(ans, n, ans.length - 1);
     		reverse(ans, 0, ans.length - 1);
-    		return new String(ans);
+    		return String.valueOf(ans);
         }
         private void reverse(char[] ans, int i, int j) {
     		while (i < j) {
@@ -2587,31 +2620,30 @@ public class Solution {
 ### 代码:
 
 ```java
-public class Solution {  
-    public void reverse(char[] arr, int start, int end) {
-        while (start < end) {
-            char temp = arr[start];
-            arr[start] = arr[end];
-            arr[end] = temp;
-            start++;
-            end--;
+public String ReverseSentence(String str) {
+    if (str == null || str.length() < 1)
+        return str;
+    char[] arr = str.toCharArray();
+    reverse(arr, 0, arr.length - 1);
+    int i = 0, j = 1;
+    while (j < arr.length) {
+        if (arr[j] == ' ') {
+            reverse(arr, i, j - 1);
+            i = j + 1;
         }
-    }   
-    public String ReverseSentence(String str) {
-        if (str == null || str.length() < 1)
-            return str;
-        char[] arr = str.toCharArray();
-        reverse(arr, 0, arr.length - 1);
-        int i = 0, j = 1;
-        while (j < arr.length) {
-            if (arr[j] == ' ') {
-                reverse(arr, i, j - 1);
-                i = j + 1;
-            }
-            j++;
-        }
-        reverse(arr, i, arr.length - 1);
-        return new String(arr);
+        j++;
+    }
+    // 注意点:若str没有空格,则从新将字符反转
+    reverse(arr, i, arr.length - 1);
+    return String.valueOf(arr);
+}
+public void reverse(char[] arr, int start, int end) {
+    while (start < end) {
+        char temp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = temp;
+        start++;
+        end--;
     }
 }
 ```
@@ -2635,25 +2667,29 @@ public class Solution {
 
 ```java
 import java.util.Arrays;
-public class Solution {
-    public boolean isContinuous(int [] numbers) {
-        int countzeros = 0;
-        int mininterval= 0;
-        int length = numbers.length;
-        if (length < 5)
+
+public boolean isContinuous(int [] numbers) {
+    if (numbers.length < 5)
+        return false;
+    Arrays.sort(numbers);
+    int count = 0, interval = 0;
+    for (int i = 0; i < numbers.length - 1; i++) {
+        // 查找大王小王
+        if (numbers[i] == 0) {
+            count++;
+            continue;
+        }
+        // 若相邻元素相等必然false
+        if (numbers[i] == numbers[i + 1]) {
             return false;
-        Arrays.sort(numbers);
-        for (int i = 0; i < length; i++) {
-            if (numbers[i] == 0)
-                countzeros++;
         }
-        for (int i = countzeros; i < length - 1; i++) {
-            if (numbers[i] == numbers[i + 1])
-                return false;
-            mininterval += numbers[i + 1] - numbers[i] - 1;
-        }
-        return mininterval > countzeros ? false : true;
+        // 计算相邻元素差距
+        interval += numbers[i + 1] - numbers[i] - 1;
     }
+    if (count >= interval) {
+        return true;
+    }
+    return false;
 }
 ```
 
@@ -2669,7 +2705,7 @@ public class Solution {
 
 ### 解题思路:
 
-方法一：使用链表解决问题。
+约瑟夫环问题，使用链表，每遇到一次删除一次即可。
 
 ### 代码:
 
@@ -2712,12 +2748,10 @@ public class Solution {
 ### 代码:
 
 ```java
-public class Solution {
-    public int Sum_Solution(int n) {
-        int sum = n;
-        boolean flag = (n > 0) && ((sum += Sum_Solution(n-1)) > 0);
-        return sum;
-    }
+public int Sum_Solution(int n) {
+    int sum = n;
+    boolean flag = (n > 0) && ((sum += Sum_Solution(n-1)) > 0);
+    return sum;
 }
 ```
 
@@ -2742,16 +2776,14 @@ public class Solution {
 ### 代码:
 
 ```java
-public class Solution {
-    public int Add(int num1,int num2) {
-        while (num2 != 0) {
-            int sum = num1 ^ num2;
-            int carry = (num1 & num2) << 1;
-            num1 = sum;
-            num2 = carry;
-        }
-        return num1;
+public int Add(int num1,int num2) {
+    while (num2 != 0) {
+        int sum = num1 ^ num2;
+        int carry = (num1 & num2) << 1;
+        num1 = sum;
+        num2 = carry;
     }
+    return num1;
 }
 ```
 
@@ -2776,31 +2808,29 @@ public class Solution {
 ### 代码:
 
 ```java
-public class Solution {
-    public int StrToInt(String str) {
-        if (str == "" || str.length() == 0)
-            return 0;
-        int integer = 0;
-        boolean flag1 = false;
-        char[] arr = str.toCharArray();
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == '+'){
-                continue;
-            }else if (arr[i] == '-'){
-                flag1 = true;
-                continue;
-            }
-            if (arr[i] > '0' && arr[i] < '9') {
-                int flag2 = flag1 ? -1 : 1;
-                integer = integer * 10 + flag2 * (arr[i] - 48);
-                if ((flag1 && integer < 0x80000000) || (!flag1 && integer > 0x7fffffff))
-                    return 0;
-            }else {
-                return 0;
-            }
+public int StrToInt(String str) {
+    if (str == "" || str.length() == 0)
+        return 0;
+    int integer = 0;
+    boolean flag1 = false;
+    char[] arr = str.toCharArray();
+    for (int i = 0; i < arr.length; i++) {
+        if (arr[i] == '+'){
+            continue;
+        }else if (arr[i] == '-'){
+            flag1 = true;
+            continue;
         }
-        return integer;
+        if (arr[i] > '0' && arr[i] < '9') {
+            int flag2 = flag1 ? -1 : 1;
+            integer = integer * 10 + flag2 * (arr[i] - 48);
+            if ((flag1 && integer < 0x80000000) || (!flag1 && integer > 0x7fffffff))
+                return 0;
+        }else {
+            return 0;
+        }
     }
+    return integer;
 }
 ```
 
@@ -2824,26 +2854,27 @@ public class Solution {
 ### 代码:
 
 ```java
-public class Solution {
-    public boolean duplicate(int numbers[],int length,int [] duplication) {
-        if (numbers == null)
-            return false;
-        for (int i = 0; i < numbers.length; i++) {
-            if (numbers[i] < 0 || numbers[i] > length - 1) {
-                return false;
-            }
-            while (numbers[i] != i) {
-                if (numbers[i] == numbers[numbers[i]]) {
-                    duplication[0] = numbers[i];
-                    return true;
-                }
-                int temp = numbers[i];
-                numbers[i] = numbers[temp];
-                numbers[temp] = temp;
-            }
-        }
+public boolean duplicate(int numbers[],int length,int [] duplication) {
+    if (numbers == null)
         return false;
+    for (int i = 0; i < numbers.length; i++) {
+        if (numbers[i] < 0 || numbers[i] > length - 1) {
+            return false;
+        }
+        // 判断当前索引和该索引的元素是否相同
+        while (numbers[i] != i) {
+            // 判断当前元素和以该元素为索引的元素是否相同
+            if (numbers[i] == numbers[numbers[i]]) {
+                duplication[0] = numbers[i];
+                return true;
+            }
+            // 将当前元素转移至以该元素为索引的地方
+            int temp = numbers[i];
+            numbers[i] = numbers[temp];
+            numbers[temp] = temp;
+        }
     }
+    return false;
 }
 ```
 
@@ -2898,21 +2929,20 @@ B[0] = B[0] * temp = A[4] * A[3] * A[2] * A[1] = 40;
 
 ```java
 import java.util.ArrayList;
-public class Solution {
-    public int[] multiply(int[] A) {
-        int length = A.length;
-        int[] B = new int[length];
-        B[0] = 1;
-        for (int i = 1; i < length; i++) {
-            B[i] = B[i-1] * A[i-1];
-        }
-        int temp = 1;
-        for (int i = length - 2; i >= 0; i--) {
-            temp *= A[i+1];
-            B[i] *= temp;
-        }
-        return B;
+
+public int[] multiply(int[] A) {
+    int length = A.length;
+    int[] B = new int[length];
+    B[0] = 1;
+    for (int i = 1; i < length; i++) {
+        B[i] = B[i-1] * A[i-1];
     }
+    int temp = 1;
+    for (int i = length - 2; i >= 0; i--) {
+        temp *= A[i+1];
+        B[i] *= temp;
+    }
+    return B;
 }
 ```
 
@@ -3289,38 +3319,35 @@ public class Solution {
 ### 代码:
 
 ```java
-public class Solution {
-    public TreeLinkNode GetNext(TreeLinkNode pNode)
-    {
-        if (pNode == null)
-            return null;
-        // 给定结点有右子树
-        if (pNode.right != null) {
-            pNode = pNode.right;
-            while (pNode.left != null) {
-                pNode = pNode.left;
-            }
-            return pNode;
-        // 给定结点没有右子树
-        } else {
-            TreeLinkNode parent = pNode.next;
-            // 该结点是其父结点的左孩子
-            // 不为空是为了避免只有左子树的情况
-            if (parent != null && parent.left == pNode) {
-                return parent;
-			// 该结点是其父结点的右孩子
-            } else if (parent != null && parent.right == pNode) {
+public TreeLinkNode GetNext(TreeLinkNode pNode) {
+    if (pNode == null)
+        return null;
+    // 给定结点有右子树
+    if (pNode.right != null) {
+        pNode = pNode.right;
+        while (pNode.left != null) {
+            pNode = pNode.left;
+        }
+        return pNode;
+    // 给定结点没有右子树
+    } else {
+        TreeLinkNode parent = pNode.next;
+        // 该结点是其父结点的左孩子
+        // 不为空是为了避免只有左子树的情况
+        if (parent != null && parent.left == pNode) {
+            return parent;
+        // 该结点是其父结点的右孩子
+        } else if (parent != null && parent.right == pNode) {
+            pNode = parent;
+            parent = parent.next;
+            while (parent != null && parent.left != pNode) {
                 pNode = parent;
                 parent = parent.next;
-                while (parent != null && parent.left != pNode) {
-                    pNode = parent;
-                    parent = parent.next;
-                }
-                return parent;
             }
+            return parent;
         }
-        return null;
     }
+    return null;
 }
 ```
 
@@ -3347,26 +3374,24 @@ public class Solution {
 
 ```java
 // 递归
-public class Solution {
-    boolean isSymmetrical(TreeNode pRoot)
-    {
-        if (pRoot == null)
-            return true;
-        return isSubSymmetrical(pRoot.left, pRoot.right);
+boolean isSymmetrical(TreeNode pRoot)
+{
+    if (pRoot == null)
+        return true;
+    return isSubSymmetrical(pRoot.left, pRoot.right);
+}
+
+public boolean isSubSymmetrical(TreeNode left, TreeNode right) {
+    if (left == null && right == null) {
+        return true;
     }
-    
-    public boolean isSubSymmetrical(TreeNode left, TreeNode right) {
-        if (left == null && right == null) {
-            return true;
-        }
-        if (left == null || right == null) {
-            return false;
-        }
-        if (left.val != right.val) {
-            return false;
-        }
-        return isSubSymmetrical(left.left, right.right) && isSubSymmetrical(right.left, left.right);
+    if (left == null || right == null) {
+        return false;
     }
+    if (left.val != right.val) {
+        return false;
+    }
+    return isSubSymmetrical(left.left, right.right) && isSubSymmetrical(right.left, left.right);
 }
 ```
 

@@ -1,4 +1,4 @@
-##### [原题链接](https://leetcode-cn.com/problems/longest-palindromic-subsequence/) 
+##### [原题链接](https://leetcode-cn.com/problems/longest-palindromic-subsequence/)
 
 ##### 难度 medium
 

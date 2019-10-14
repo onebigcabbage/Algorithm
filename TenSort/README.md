@@ -287,9 +287,6 @@ public class Solution {
 		if (left >= right)
 			return;
 		int index = partition(array, left, right);
-		
-		// System.out.println(index);
-		
 		sort(array, left, index - 1);
 		sort(array, index + 1, right);
     }
@@ -297,17 +294,20 @@ public class Solution {
 	public static int partition(int[] array, int left, int right){
         int pivot = selectPivot(array, left, right);
         while(left < right){
-            while(left < right && array[right] > pivot){
+            while(left < right && array[right] >= pivot){
                 right--;
             }
-            swap(array, right, left);
+            if (left < right) {
+                array[left++] = array[right];
+            }
             while(left < right && array[left] < pivot){
                 left++;
             }
-            swap(array, left, right);
+            if (left < right) {
+                array[right--] = array[left];
+            }
         }
     	array[right] = pivot;
-        // System.out.println(Arrays.toString(array));
         return right;
     }
 
